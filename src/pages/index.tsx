@@ -1,13 +1,11 @@
 import { type NextPage } from "next";
-import Link from "next/link";
 import { Layout } from "~/components/Layout/Layout";
-import { Navbar } from "~/components/Navbar";
 import { api } from "~/utils/api";
 
 const Home: NextPage = () => {
-  const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const { data: cars } = api.cars.getAll.useQuery();
 
-  return <Layout></Layout>;
+  return <Layout>{cars?.map((car) => "Car: " + car.id)}</Layout>;
 };
 
 export default Home;
