@@ -1,11 +1,10 @@
+import { useAuth } from "@clerk/nextjs";
 import { type NextPage } from "next";
-import { Layout } from "~/components/Layout/Layout";
-import { api } from "~/utils/api";
 
-const Home: NextPage = () => {
-  const { data: cars } = api.cars.getAll.useQuery();
+const Home: NextPage = (props) => {
+  const { userId } = useAuth();
 
-  return <Layout>{cars?.map((car) => "Car: " + car.id)}</Layout>;
+  return null;
 };
 
 export default Home;

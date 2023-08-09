@@ -3,10 +3,14 @@
  * for Docker builds.
  */
 await import("./src/env.mjs");
+import { withSuperjson } from "next-superjson";
 
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: true,
+  images: {
+    remotePatterns: [{ hostname: "upload.wikimedia.org" }],
+  },
 
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config
@@ -19,4 +23,5 @@ const config = {
     defaultLocale: "en",
   },
 };
-export default config;
+
+export default withSuperjson()(config);

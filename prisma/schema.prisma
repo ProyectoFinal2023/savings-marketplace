@@ -3,19 +3,19 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
 model User {
   id                String              @id
   addressId         String?             @unique
+  address           Address?            @relation(fields: [addressId], references: [id])
   userTypeId        String              @unique
+  userType          UserType            @relation(fields: [userTypeId], references: [id])
   birthdate         DateTime
   cuit              String?             @db.VarChar(11)
-  address           Address?            @relation(fields: [addressId], references: [id])
-  userType          UserType            @relation(fields: [userTypeId], references: [id])
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
 
@@ -40,9 +40,9 @@ model UserInSavingsPlan {
   invoices    PaymentInvoice[]
 
   @@unique([planId, userId], map: "plan_id_user_id_unique")
-  @@map("savings_plans_users")
-  @@index([userId])
   @@unique([userId, planId])
+  @@index([userId])
+  @@map("savings_plans_users")
 }
 
 model SavingsPlan {
@@ -64,11 +64,11 @@ model SavingsPlan {
   paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
   carModel          CarModel            @relation(fields: [carModelId], references: [id])
 
-  @@map("savings_plans")
   @@index([statusId])
   @@index([paymentMethodId])
   @@index([portfolioId])
   @@index([carModelId])
+  @@map("savings_plans")
 }
 
 model PaymentInvoice {
@@ -83,9 +83,9 @@ model PaymentInvoice {
   userInSavingsPlan UserInSavingsPlan @relation(fields: [userId, planId], references: [userId, planId])
   paymentMethod     PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
 
-  @@map("payment_invoices")
   @@index([paymentMethodId])
   @@index([userId, planId])
+  @@map("payment_invoices")
 }
 
 model PaymentMethod {
@@ -119,13 +119,14 @@ model Car {
 
   @@index([userId])
   @@index([carModelId])
+  @@map("cars")
 }
 
 model CarModel {
   id           String        @id @default(cuid())
   description  String        @unique(map: "car_model_description_unique")
   amountDoors  Int           @default(4)
-  carPhotos     CarPhoto[]
+  carPhotos    CarPhoto[]
   savingsPlans SavingsPlan[]
   cars         Car[]
 
@@ -134,17 +135,25 @@ model CarModel {
 
 model CarPhoto {
   id         String    @id @default(cuid())
-  url        String
-  epigraph   String?
+  url        String    @db.Text
+  epigraph   String?   @db.Text
   carId      String?
   carModelId String?
   car        Car?      @relation(fields: [carId], references: [id])
   carModel   CarModel? @relation(fields: [carModelId], references: [id])
 
-  @@map("car_photos")
   @@index([carId])
   @@index([carModelId])
+  @@map("car_photos")
 }
+
+// model ImageFile {
+//   id       Int     @id @default(autoincrement())
+//   url      String
+//   alt_text String?
+
+//   @@map("image_files")
+// }
 
 model Portfolio {
   id              String         @id @default(cuid())
@@ -155,35 +164,35 @@ model Portfolio {
   automotive      Automotive?    @relation(fields: [automotiveId], references: [id])
   savingsPlans    SavingsPlan[]
 
-  @@map("portfolios")
   @@index([carDealershipId])
   @@index([automotiveId])
+  @@map("portfolios")
 }
 
 model CarDealership {
   id          String      @id @default(cuid())
-  description String
+  description String      @db.Text
   addressId   String
   cuit        String      @db.VarChar(11)
   code        Int
   address     Address     @relation(fields: [addressId], references: [id])
   portfolios  Portfolio[]
 
-  @@map("car_dealerships")
   @@index([addressId])
+  @@map("car_dealerships")
 }
 
 model Automotive {
   id          String      @id @default(cuid())
-  description String
-  logo        String
+  description String      @db.Text
+  logo        String      @db.Text
   createdAt   DateTime    @default(now())
   addressId   String
   address     Address     @relation(fields: [addressId], references: [id])
-  portfolios   Portfolio[]
+  portfolios  Portfolio[]
 
-  @@map("automotives")
   @@index([addressId])
+  @@map("automotives")
 }
 
 model Address {
