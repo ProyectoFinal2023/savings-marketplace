@@ -41,7 +41,7 @@ export const Navbar = ({ className }: NavbarProps) => {
           </span>
         </li>
         <li className="ml-auto shrink-0">
-          <UserButton />
+          <UserButton afterSignOutUrl="/" />
         </li>
       </ul>
     </nav>
