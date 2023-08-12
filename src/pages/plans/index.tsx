@@ -4,6 +4,7 @@ import {
   type NextPage,
 } from "next";
 import Image from "next/image";
+import { useRouter } from "next/router";
 import { Card } from "primereact/card";
 import { DefaultCar } from "public";
 import { Layout } from "~/components/Layout/Layout";
@@ -13,6 +14,8 @@ import { type PlanList } from "~/types/plans";
 const PlansPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ plans }) => {
+  const { push } = useRouter();
+
   return (
     <Layout>
       <article className="mx-auto flex w-10/12 flex-wrap justify-start gap-6 py-12">
@@ -31,6 +34,7 @@ const PlansPage: NextPage<
               />
             }
             className=" shrink-0 basis-1/3-gap-6"
+            onClick={() => push(`/plans/${plan.id}`)}
           />
         ))}
       </article>
