@@ -1,8 +1,11 @@
-import { type AppType } from "next/app";
-import { api } from "~/utils/api";
 import { ClerkProvider } from "@clerk/nextjs";
-import "~/styles/globals.css";
+import { type AppType } from "next/app";
 import Head from "next/head";
+import "primereact/resources/primereact.min.css";
+import "primereact/resources/themes/viva-light/theme.css";
+import "primeicons/primeicons.css";
+import "~/styles/globals.css";
+import { api } from "~/utils/api";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
