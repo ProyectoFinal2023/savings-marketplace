@@ -5,7 +5,7 @@ export const Layout = (props: PropsWithChildren) => {
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      {props.children}
+      <section className="my-3 h-full">{props.children}</section>
     </main>
   );
 };
