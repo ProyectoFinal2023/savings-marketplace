@@ -4,6 +4,8 @@ import { CarPhoto as CarPhotoModel } from "@prisma/client";
 import { Card } from "primereact/card";
 import { Galleria } from "primereact/galleria";
 import { Fieldset } from "primereact/fieldset";
+import { Divider } from "primereact/divider";
+import { Button } from "primereact/button";
 
 import { PlanDetail } from "~/types/plans";
 import CarPhoto from "~/components/Cars/CarPhoto";
@@ -64,6 +66,10 @@ const PlanView = ({ plan }: Props) => {
     </div>
   );
 
+  function handleClickPlan(event: React.MouseEvent<HTMLButtonElement>) {
+    console.log('Click submit burtton');
+  }
+
   return (
     <Card
       pt={{
@@ -84,42 +90,43 @@ const PlanView = ({ plan }: Props) => {
         </div>
         {/* TODO - Responsivness */}
         <div className="my-4 px-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="grid grid-rows-1">
-              <span className="font-bold">Características</span>
-              <table className="table-fixed rounded border-2 border-solid border-[#ededed] text-[14px]">
-                <tbody>
-                  <tr className="bg-[#0000000a]">
-                    <th className="px-6 py-4">Cantidad de Puertas</th>
-                    <td className="px-6 py-4">{plan.carModel.amountDoors}</td>
-                  </tr>
-                  <tr className="bg-[#fff]">
-                    <th className="px-6 py-4">Cantidad de Puertas</th>
-                    <td className="px-6 py-4">{plan.carModel.amountDoors}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div className="grid grid-rows-1">
-              <span className="font-bold">Especificaciones</span>
-              <table className="table-fixed rounded border-2 border-solid border-[#ededed] text-[14px]">
-                <tbody>
-                  <tr className="bg-[#0000000a]">
-                    <th className="px-6 py-4">Cantidad de Puertas</th>
-                    <td className="px-6 py-4">{plan.carModel.amountDoors}</td>
-                  </tr>
-                  <tr className="bg-[#fff]">
-                    <th className="px-6 py-4">Cantidad de Puertas</th>
-                    <td className="px-6 py-4">{plan.carModel.amountDoors}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+          <div className="grid">
+            <span className="text-2xl font-bold">
+              {plan.carModel.description}
+            </span>
+            <Divider type="solid" style={{ borderWidth: "1px" }} />
+            <span className="text-xl">${plan.movingValue}</span>
+            <Button
+              severity="secondary"
+              size="large"
+              raised
+              style={{ marginTop: "2rem", justifyContent: "center" }}
+              onClick={handleClickPlan}
+            >
+              Reservar Plan
+            </Button>
           </div>
         </div>
       </div>
       <div className="grid py-4 text-justify">
         <Fieldset legend={legendTemplate}>{plan.description}</Fieldset>
+      </div>
+      <div className="grid grid-cols-6">
+        <div className="col-start-3 col-span-2">
+          <span className="font-bold">Características</span>
+          <table className="table-auto rounded border-2 border-solid border-[#ededed] text-[14px] w-full">
+            <tbody>
+              <tr className="bg-[#0000000a]">
+                <th className="px-6 py-4">Cantidad de cuotas</th>
+                <td className="px-6 py-4">{plan.plan_total_months}</td>
+              </tr>
+              <tr className="bg-[#fff]">
+                <th className="px-6 py-4">Cantidad de Puertas</th>
+                <td className="px-6 py-4">{plan.carModel.amountDoors}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </Card>
   );
