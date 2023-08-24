@@ -1,43 +1,19 @@
 import {
-  type InferGetServerSidePropsType,
   type GetServerSideProps,
+  type InferGetServerSidePropsType,
   type NextPage,
 } from "next";
-import Image from "next/image";
-import { useRouter } from "next/router";
-import { Card } from "primereact/card";
-import { DefaultCar } from "public";
 import { Layout } from "~/components/Layout/Layout";
+import { PlansView } from "~/components/PlansView";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
-import { type PlanList } from "~/types/plans";
+import { type SearchParams, type PlanList } from "~/types/plans";
 
 const PlansPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ plans }) => {
-  const { push } = useRouter();
-
+> = (props) => {
   return (
     <Layout>
-      <article className="mx-auto flex w-10/12 flex-wrap justify-start gap-6 py-12">
-        {plans?.map((plan) => (
-          <Card
-            key={plan.id}
-            title={plan.title}
-            subTitle={plan.description}
-            header={
-              <Image
-                alt={`${plan.title} example image`}
-                src={plan.carModel?.carPhotos[0]?.url || DefaultCar}
-                width={256}
-                height={256}
-                className=" h-64 object-cover"
-              />
-            }
-            className=" shrink-0 basis-1/3-gap-6"
-            onClick={() => push(`/plans/${plan.id}`)}
-          />
-        ))}
-      </article>
+      <PlansView {...props} />
     </Layout>
   );
 };
@@ -46,12 +22,19 @@ export default PlansPage;
 
 export const getServerSideProps: GetServerSideProps<{
   plans: PlanList;
-}> = async (ctx) => {
+  total: number;
+  search: SearchParams;
+}> = async ({ query }) => {
+  const title = query.title || "";
+  if (typeof title !== "string") throw new Error();
+  const page = Number(query.page) || 1;
+  const size = Number(query.size) || 3;
+
   const ssg = generateSSGHelper();
-  const plans = await ssg.savingsPlans.getAll.fetch();
-  return {
-    props: {
-      plans,
-    },
-  };
+  const search = { title, page, size };
+  const { plans, total } = await ssg.savingsPlans.getSavingsPlans.fetch({
+    search,
+  });
+
+  return { props: { plans, total, search } };
 };
