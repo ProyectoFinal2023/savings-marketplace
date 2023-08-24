@@ -13,6 +13,32 @@ export const savingsPlansRouter = createTRPCRouter({
       },
     });
   }),
+  getOne: publicProcedure
+    .input(z.object({ id: z.string() }))
+    .query(({ ctx, input: { id } }) => {
+      return ctx.prisma.savingsPlan.findUniqueOrThrow({
+        where: {
+          id,
+        },
+        include: {
+          carModel: {
+            include: {
+              carPhotos: true,
+            },
+          },
+          status: {
+            select: {
+              description: true,
+            },
+          },
+          paymentMethod: {
+            select: {
+              description: true,
+            },
+          },
+        },
+      });
+  }),
   getSavingsPlans: publicProcedure
     .input(
       z.object({

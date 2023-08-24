@@ -10,7 +10,7 @@ import { api } from "~/utils/api";
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
     <>
-      <ClerkProvider {...pageProps}>
+      <ClerkProvider>
         <Head>
           <title>Savings Marketplace</title>
           <meta

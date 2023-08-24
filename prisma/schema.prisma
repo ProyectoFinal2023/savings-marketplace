@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -51,21 +48,21 @@ model UserInSavingsPlan {
 model SavingsPlan {
   id                String              @id @default(cuid())
   statusId          String
-  status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
-  usersInPlan       UserInSavingsPlan[]
   portfolioId       String
-  portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
   title             String
   description       String
   plan_months       Int
   plan_total_months Int
   paymentMethodId   String
-  paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
   startDate         DateTime
   endDate           DateTime
   carModelId        String
-  carModel          CarModel            @relation(fields: [carModelId], references: [id])
   movingValue       Int
+  status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
+  usersInPlan       UserInSavingsPlan[]
+  portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
+  paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
+  carModel          CarModel            @relation(fields: [carModelId], references: [id])
 
   @@index([statusId])
   @@index([paymentMethodId])
@@ -79,12 +76,12 @@ model PaymentInvoice {
   createdAt         DateTime          @default(now())
   planId            String
   userId            String
-  userInSavingsPlan UserInSavingsPlan @relation(fields: [userId, planId], references: [userId, planId])
   paymentMethodId   String
-  paymentMethod     PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
-  amountArs         Decimal           @db.Decimal()
+  amountArs         Decimal           @db.Decimal(10, 0)
   paymentDate       DateTime
   installmentNumber Int
+  userInSavingsPlan UserInSavingsPlan @relation(fields: [userId, planId], references: [userId, planId])
+  paymentMethod     PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
 
   @@index([paymentMethodId])
   @@index([userId, planId])
@@ -94,35 +91,32 @@ model PaymentInvoice {
 model PaymentMethod {
   id           String           @id @default(cuid())
   createdAt    DateTime         @default(now())
-  description  String
+  description  String           @unique(map: "payment_method_description_unique")
   invoices     PaymentInvoice[]
   savingsPlans SavingsPlan[]
 
-  @@unique([description], map: "payment_method_description_unique")
   @@map("payment_methods")
 }
 
 model SavingsPlanStatus {
   id           String        @id @default(cuid())
-  description  String
+  description  String        @unique(map: "savings_plan_status_description_unique")
   savingsPlans SavingsPlan[]
 
-  @@unique([description], map: "savings_plan_status_description_unique")
   @@map("savings_plan_status")
 }
 
 model Car {
   id         String     @id @default(cuid())
-  plate      String
+  plate      String     @unique(map: "car_plate_unique")
   userId     String
-  user       User       @relation(fields: [userId], references: [id])
   is_awarded Boolean
   is_drawn   Boolean
-  carPhoto   CarPhoto[]
   carModelId String
+  user       User       @relation(fields: [userId], references: [id])
+  carPhoto   CarPhoto[]
   carModel   CarModel   @relation(fields: [carModelId], references: [id])
 
-  @@unique([plate], map: "car_plate_unique")
   @@index([userId])
   @@index([carModelId])
   @@map("cars")
@@ -130,13 +124,12 @@ model Car {
 
 model CarModel {
   id           String        @id @default(cuid())
-  description  String
+  description  String        @unique(map: "car_model_description_unique")
   amountDoors  Int           @default(4)
   carPhotos    CarPhoto[]
   savingsPlans SavingsPlan[]
   cars         Car[]
 
-  @@unique([description], map: "car_model_description_unique")
   @@map("car_models")
 }
 
@@ -145,8 +138,8 @@ model CarPhoto {
   url        String    @db.Text
   epigraph   String?   @db.Text
   carId      String?
-  car        Car?      @relation(fields: [carId], references: [id])
   carModelId String?
+  car        Car?      @relation(fields: [carId], references: [id])
   carModel   CarModel? @relation(fields: [carModelId], references: [id])
 
   @@index([carId])
@@ -154,12 +147,20 @@ model CarPhoto {
   @@map("car_photos")
 }
 
+// model ImageFile {
+//   id       Int     @id @default(autoincrement())
+//   url      String
+//   alt_text String?
+
+//   @@map("image_files")
+// }
+
 model Portfolio {
   id              String         @id @default(cuid())
   createdAt       DateTime       @default(now())
   carDealershipId String?
-  carDealership   CarDealership? @relation(fields: [carDealershipId], references: [id])
   automotiveId    String?
+  carDealership   CarDealership? @relation(fields: [carDealershipId], references: [id])
   automotive      Automotive?    @relation(fields: [automotiveId], references: [id])
   savingsPlans    SavingsPlan[]
 
@@ -172,9 +173,9 @@ model CarDealership {
   id          String      @id @default(cuid())
   description String      @db.Text
   addressId   String
-  address     Address     @relation(fields: [addressId], references: [id])
   cuit        String      @db.VarChar(11)
   code        Int
+  address     Address     @relation(fields: [addressId], references: [id])
   portfolios  Portfolio[]
 
   @@index([addressId])

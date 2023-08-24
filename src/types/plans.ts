@@ -8,3 +8,5 @@ export type SearchParams = {
   page: number;
   size: number;
 };
+
+export type PlanDetail = RouterOutputs["savingsPlans"]["getOne"];
