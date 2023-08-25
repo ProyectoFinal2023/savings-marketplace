@@ -5,7 +5,6 @@ import { useRouter } from "next/router";
 import { routesPaths } from "~/routesPaths";
 import { InputText } from "primereact/inputtext";
 import { routePaths } from "~/utils/routes";
-import { useRouter } from "next/router";
 import { useState } from "react";
 
 type NavbarProps = {

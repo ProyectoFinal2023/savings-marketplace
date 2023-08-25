@@ -1,6 +1,5 @@
 import { useAuth } from "@clerk/nextjs";
 import { GetServerSideProps, type NextPage } from "next";
-import { type NextPage } from "next";
 
 const Home: NextPage = (props) => {
   const { userId } = useAuth();

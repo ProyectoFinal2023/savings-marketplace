@@ -70,6 +70,11 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
                 width={380}
                 height={256}
                 className=" h-64 object-cover"
+                onClick={() => push(
+                  routePaths.planDetail({
+                    id: plan.id,
+                  })
+                )}
               />
             }
             className=" shrink-0 basis-1/3-gap-6"
