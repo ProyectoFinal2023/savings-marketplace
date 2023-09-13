@@ -18,6 +18,8 @@ model User {
   cuit              String?             @db.VarChar(11)
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
+  tutorialStep      Int                 @default(1)
+  tutorialDone      Boolean             @default(false)
 
   @@map("users")
 }
