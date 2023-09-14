@@ -10,7 +10,7 @@ export const PersonalInfo = ({
   errors: ErrorsT;
 }) => (
   <>
-    <div className="flex gap-4">
+    <div className="flex gap-4 flex-wrap">
       <InputText
         register={register}
         placeholder="Jorge"

@@ -29,7 +29,7 @@ export const InputText = <T extends FieldValues>(props: InputTextProps<T>) => {
   } = props;
 
   return (
-    <div className="flex grow flex-col items-stretch gap-2">
+    <div className="flex flex-col items-stretch gap-2 row-span-4 w-full">
       <label htmlFor={name}>
         {label}
         <span className="text-red-500">{required ? " *" : ""}</span>
