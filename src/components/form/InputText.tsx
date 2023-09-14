@@ -14,10 +14,19 @@ type InputTextProps<T extends FieldValues> = {
   label: string;
   errors: ErrorsT;
   required?: boolean;
+  maxLength?: number;
 };
 
 export const InputText = <T extends FieldValues>(props: InputTextProps<T>) => {
-  const { register, name, placeholder, label, errors, required = true } = props;
+  const {
+    register,
+    name,
+    placeholder,
+    label,
+    errors,
+    required = true,
+    maxLength,
+  } = props;
 
   return (
     <div className="flex grow flex-col items-stretch gap-2">
@@ -25,7 +34,11 @@ export const InputText = <T extends FieldValues>(props: InputTextProps<T>) => {
         {label}
         <span className="text-red-500">{required ? " *" : ""}</span>
       </label>
-      <PrimeInputText {...register(name)} placeholder={placeholder} />
+      <PrimeInputText
+        {...register(name)}
+        placeholder={placeholder}
+        maxLength={maxLength}
+      />
       <ErrorMessage errors={errors} name={name} />
     </div>
   );

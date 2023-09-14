@@ -23,7 +23,7 @@ export const Guarantors = ({
     guarantors.append({
       name: "",
       surname: "",
-      dni: "",
+      cuit: "",
       phone: "",
       email: "",
       address: {
@@ -32,7 +32,7 @@ export const Guarantors = ({
         city: "",
         district: "",
         postalCode: 1234,
-        streetNumber: undefined,
+        streetNumber: 1234,
         additionalData: "",
       },
     });
@@ -46,7 +46,7 @@ export const Guarantors = ({
             <AccordionTab
               key={g.id}
               header={
-                g.name || g.surname
+                g.name && g.surname
                   ? `${g.name} ${g.surname}`
                   : `Garante #${index + 1}`
               }
@@ -77,10 +77,11 @@ export const Guarantors = ({
                   </div>
                   <InputText
                     register={register}
-                    placeholder="99999999"
-                    name={`${prefix}.dni` as "guarantors.0.dni"}
-                    label="DNI"
+                    placeholder="99999999999"
+                    name={`${prefix}.cuit` as "guarantors.0.cuit"}
+                    label="CUIT"
                     errors={errors}
+                    maxLength={11}
                   />
                   <InputText
                     register={register}

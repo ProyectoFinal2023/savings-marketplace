@@ -35,7 +35,7 @@ export const Address = ({
           label="Altura"
           placeholder="123"
           errors={errors}
-          required={false}
+          required={true}
         />
       </div>
       <div className="flex gap-4">

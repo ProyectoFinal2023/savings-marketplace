@@ -28,9 +28,10 @@ export const PersonalInfo = ({
     </div>
     <InputText
       register={register}
-      name="dni"
-      label="DNI"
-      placeholder="99999999"
+      name="cuit"
+      label="CUIT"
+      maxLength={11}
+      placeholder="99999999999"
       errors={errors}
     />
     <InputText

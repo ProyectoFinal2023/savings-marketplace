@@ -3,7 +3,7 @@ import { type GetServerSideProps, type NextPage } from "next";
 import { Layout } from "~/components/Layout/Layout";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 
-const Home: NextPage = (props) => {
+const Home: NextPage = (_props) => {
   return (
     <Layout>
       <button className="bg-green-300" onClick={() => ({})}>
@@ -17,7 +17,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const clerkUser = getAuth(ctx.req);
   if (!clerkUser.userId) throw Error("Not authorized.");
   const ssg = generateSSGHelper();
-  const user = await ssg.users.getById.fetch({ id: clerkUser.userId });
+  const user = await ssg.users.getByClerkId.fetch({
+    clerkId: clerkUser.userId,
+  });
   if (!user) {
     return {
       redirect: {

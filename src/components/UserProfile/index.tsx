@@ -4,25 +4,28 @@ import { Card } from "primereact/card";
 import { TabPanel, TabView } from "primereact/tabview";
 import { useRegister } from "~/hooks/useRegister";
 import { type RegisterSchemaT } from "~/schemas/registerSchema";
+import { type UserInfoT } from "~/types/userInfo";
 import { Address } from "./tabs/Address";
 import { Guarantors } from "./tabs/Guarantors";
 import { PersonalInfo } from "./tabs/PersonalInfo";
-import { ErrorMessage } from "../ErrorMessage";
 
 type UserProfileProps = {
   className?: string;
+  user: UserInfoT;
+  clerkId: string;
 };
 
-export const UserProfile = (_: UserProfileProps) => {
-  const { form, guarantors } = useRegister();
+export const UserProfile = (props: UserProfileProps) => {
+  const { form, guarantors, upsertUser } = useRegister(props);
   const {
     register,
     handleSubmit,
     formState: { errors, isValid, isSubmitted },
   } = form;
 
-  const onSubmit = (data: RegisterSchemaT) => console.log(data);
-  console.log(errors);
+  const onSubmit = (data: RegisterSchemaT) => {
+    upsertUser(data);
+  };
   return (
     <main className="md:mx-auto md:max-w-xl md:p-4">
       <Card
