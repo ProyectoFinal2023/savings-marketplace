@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
-import { InputText } from "primereact/inputtext";
-import { ErrorMessage } from "~/components/ErrorMessage";
+import { InputText } from "~/components/form/InputText";
 import { type ErrorsT, type RegisterT } from "~/types/userInfo";
 
 export const PersonalInfo = ({
@@ -12,31 +11,42 @@ export const PersonalInfo = ({
 }) => (
   <>
     <div className="flex gap-4">
-      <div className="flex grow flex-col items-stretch gap-2">
-        <label htmlFor="name">Nombre</label>
-        <InputText {...register("name")} placeholder="Jorge" />
-        <ErrorMessage errors={errors} name="name" />
-      </div>
-      <div className="flex grow flex-col gap-2">
-        <label htmlFor="surname">Apellido</label>
-        <InputText {...register("surname")} placeholder="Pérez" />
-        <ErrorMessage errors={errors} name="surname" />
-      </div>
+      <InputText
+        register={register}
+        placeholder="Jorge"
+        name="name"
+        label="Nombre"
+        errors={errors}
+      />
+      <InputText
+        register={register}
+        placeholder="Pérez"
+        name="surname"
+        label="Apellido"
+        errors={errors}
+      />
     </div>
-    <div className="flex flex-col gap-2">
-      <label htmlFor="dni">DNI</label>
-      <InputText {...register("dni")} placeholder="99999999" />
-      <ErrorMessage errors={errors} name="dni" />
-    </div>
-    <div className="flex flex-col gap-2">
-      <label htmlFor="phone">N. de Celular</label>
-      <InputText {...register("phone")} placeholder="+54 9 11 1234-5678" />
-      <ErrorMessage errors={errors} name="phone" />
-    </div>
-    <div className="flex flex-col gap-2">
-      <label htmlFor="email">Email</label>
-      <InputText {...register("email")} placeholder="ejemplo@gmail.com" />
-      <ErrorMessage errors={errors} name="email" />
-    </div>
+    <InputText
+      register={register}
+      name="cuit"
+      label="CUIT"
+      maxLength={11}
+      placeholder="99999999999"
+      errors={errors}
+    />
+    <InputText
+      register={register}
+      name="phone"
+      label="N. de Celular"
+      placeholder="+54 9 11 1234-5678"
+      errors={errors}
+    />
+    <InputText
+      register={register}
+      name="email"
+      label="Email"
+      placeholder="ejemplo@gmail.com"
+      errors={errors}
+    />
   </>
 );

@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-misused-promises */
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
 import { type UseFormReturn } from "react-hook-form";
-import { ErrorMessage } from "~/components/ErrorMessage";
+import { InputText } from "~/components/form/InputText";
 import { type RegisterSchemaT } from "~/schemas/registerSchema";
 import { type GuarantorT } from "~/types/userInfo";
 import { Address } from "./Address";
@@ -19,90 +18,91 @@ export const Guarantors = ({
     register,
     formState: { errors },
   } = form;
+
+  const onClickAddGuarantor = () =>
+    guarantors.append({
+      name: "",
+      surname: "",
+      cuit: "",
+      phone: "",
+      email: "",
+      address: {
+        street: "",
+        province: "",
+        city: "",
+        district: "",
+        postalCode: 1234,
+        streetNumber: 1234,
+        additionalData: "",
+      },
+    });
+
   return (
     <>
       <Accordion>
-        {guarantors.fields.map((g, index) => (
-          <AccordionTab
-            key={g.id}
-            header={
-              g.name || g.surname
-                ? `${g.name} ${g.surname}`
-                : `Garante #${index + 1}`
-            }
-          >
-            <div className="relative">
-              <button
-                className="absolute right-2"
-                onClick={() => guarantors.remove(index)}
-              >
-                <i className="pi pi-times" />
-              </button>
-              <div className="flex flex-col gap-4 p-4">
-                <div className="flex gap-4">
-                  <div className="flex w-full flex-col items-stretch gap-2">
-                    <label htmlFor={`guarantors.${index}.name`}>Nombre</label>
+        {guarantors.fields.map((g, index) => {
+          const prefix = `guarantors.${index}`;
+          return (
+            <AccordionTab
+              key={g.id}
+              header={
+                g.name && g.surname
+                  ? `${g.name} ${g.surname}`
+                  : `Garante #${index + 1}`
+              }
+            >
+              <div className="relative">
+                <button
+                  className="absolute right-2"
+                  onClick={() => guarantors.remove(index)}
+                >
+                  <i className="pi pi-times" />
+                </button>
+                <div className="flex flex-col gap-4 p-4">
+                  <div className="flex gap-4">
                     <InputText
-                      {...register(`guarantors.${index}.name`)}
+                      register={register}
                       placeholder="Jorge"
-                    />
-                    <ErrorMessage
+                      name={`${prefix}.name` as "guarantors.0.name"}
+                      label="Nombre"
                       errors={errors}
-                      name={`guarantors.${index}.name`}
                     />
-                  </div>
-                  <div className="flex flex-col gap-2">
-                    <label htmlFor={`guarantors.${index}.name`}>Apellido</label>
                     <InputText
-                      {...register(`guarantors.${index}.surname`)}
+                      register={register}
                       placeholder="Pérez"
-                    />
-                    <ErrorMessage
+                      name={`${prefix}.surname` as "guarantors.0.surname"}
+                      label="Apellido"
                       errors={errors}
-                      name={`guarantors.${index}.surname`}
                     />
                   </div>
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label htmlFor={`guarantors.${index}.dni`}>DNI</label>
                   <InputText
-                    {...register(`guarantors.${index}.dni`)}
-                    placeholder="99999999"
-                  />
-                  <ErrorMessage
+                    register={register}
+                    placeholder="99999999999"
+                    name={`${prefix}.cuit` as "guarantors.0.cuit"}
+                    label="CUIT"
                     errors={errors}
-                    name={`guarantors.${index}.dni`}
+                    maxLength={11}
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label htmlFor={`guarantors.${index}.phone`}>
-                    N. de Celular
-                  </label>
                   <InputText
-                    {...register(`guarantors.${index}.phone`)}
+                    register={register}
                     placeholder="+54 9 11 1234-5678"
-                  />
-                  <ErrorMessage
+                    name={`${prefix}.phone` as "guarantors.0.phone"}
+                    label="N. de Celular"
                     errors={errors}
-                    name={`guarantors.${index}.phone`}
                   />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label htmlFor={`guarantors.${index}.email`}>Email</label>
                   <InputText
-                    {...register(`guarantors.${index}.email`)}
+                    register={register}
                     placeholder="ejemplo@gmail.com"
-                  />
-                  <ErrorMessage
+                    name={`${prefix}.email` as "guarantors.0.email"}
+                    label="Email"
                     errors={errors}
-                    name={`guarantors.${index}.email`}
                   />
+                  <Address prefix={`guarantors.${index}`} form={form} />
                 </div>
-                <Address prefix={`guarantors.${index}`} form={form} />
               </div>
-            </div>
-          </AccordionTab>
-        ))}
+            </AccordionTab>
+          );
+        })}
       </Accordion>
       <Button
         label="Agregar un garante"
@@ -110,15 +110,7 @@ export const Guarantors = ({
         severity="success"
         className="mx-auto w-1/2"
         icon="pi pi-plus"
-        onClick={() =>
-          guarantors.append({
-            name: "",
-            surname: "",
-            dni: "",
-            phone: "",
-            email: "",
-          })
-        }
+        onClick={onClickAddGuarantor}
       />
     </>
   );
