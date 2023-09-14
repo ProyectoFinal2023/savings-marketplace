@@ -12,7 +12,7 @@ model User {
   id                String              @id @default(cuid())
   addressId         String?             @unique
   address           Address?            @relation(fields: [addressId], references: [id])
-  userTypeId        String              @unique
+  userTypeId        String
   userType          UserType            @relation(fields: [userTypeId], references: [id])
   birthdate         DateTime?
   clerkId String?
