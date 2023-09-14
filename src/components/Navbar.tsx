@@ -8,6 +8,7 @@ import { routesPaths } from "~/routesPaths";
 import { InputText } from "primereact/inputtext";
 import { routePaths } from "~/utils/routes";
 import { useState } from "react";
+import { env } from "~/env.mjs";
 
 type NavbarProps = {
   className?: string;
@@ -25,7 +26,7 @@ export const Navbar = ({ className }: NavbarProps) => {
           </Link>
         </li>
         <li className="ml-auto shrink-0">
-          <UserButton />
+          <UserButton afterSignOutUrl={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL} />
         </li>
       </ul>
     </nav>
