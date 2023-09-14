@@ -25,10 +25,9 @@ export const UserProfile = (props: UserProfileProps) => {
 
   const onSubmit = (data: RegisterSchemaT) => {
     upsertUser(data);
-
   };
   return (
-    <main className="md:mx-auto md:max-w-xl md:p-4">
+    <main className="md:mx-auto md:max-w-4xl md:p-4">
       <Card
         title="Tu perfil"
         subTitle="Para poder comprar/vender un plan de ahorro, debes completar los siguientes datos:"
