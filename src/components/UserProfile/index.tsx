@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-misused-promises */
 import { useRegister } from "~/hooks/useRegister";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
@@ -11,45 +12,75 @@ import {
 import { type RegisterSchemaT } from "~/schemas/registerSchema";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { InputNumber } from "primereact/inputnumber";
+import { ErrorMessage } from "@hookform/error-message";
 
 type RegisterT = UseFormReturn<RegisterSchemaT>["register"];
+type ErrorsT = UseFormReturn<RegisterSchemaT>["formState"]["errors"];
 type GuarantorT = UseFieldArrayReturn<RegisterSchemaT, "guarantors", "id">;
 
-const PersonalInfo = ({ register }: { register: RegisterT }) => (
+const renderErrorMessage = ({ message }: { message: string }) => (
+  <p className="text-red-800">{message}</p>
+);
+
+const PersonalInfo = ({
+  register,
+  errors,
+}: {
+  register: RegisterT;
+  errors: ErrorsT;
+}) => (
   <>
     <div className="flex gap-4">
-      <div className="flex w-full flex-col items-stretch gap-2">
+      <div className="flex grow flex-col items-stretch gap-2">
         <label htmlFor="name">Nombre</label>
         <InputText {...register("name")} placeholder="Jorge" />
+        <ErrorMessage errors={errors} name="name" render={renderErrorMessage} />
       </div>
-      <div className="flex flex-col gap-2">
+      <div className="flex grow flex-col gap-2">
         <label htmlFor="surname">Apellido</label>
-        <InputText {...register("name")} placeholder="Pérez" />
+        <InputText {...register("surname")} placeholder="Pérez" />
+        <ErrorMessage
+          errors={errors}
+          name="surname"
+          render={renderErrorMessage}
+        />
       </div>
     </div>
     <div className="flex flex-col gap-2">
       <label htmlFor="dni">DNI</label>
       <InputText {...register("dni")} placeholder="99999999" />
+      <ErrorMessage errors={errors} name="dni" render={renderErrorMessage} />
     </div>
     <div className="flex flex-col gap-2">
       <label htmlFor="phone">N. de Celular</label>
       <InputText {...register("phone")} placeholder="+54 9 11 1234-5678" />
+      <ErrorMessage errors={errors} name="phone" render={renderErrorMessage} />
     </div>
     <div className="flex flex-col gap-2">
       <label htmlFor="email">Email</label>
       <InputText {...register("email")} placeholder="ejemplo@gmail.com" />
+      <ErrorMessage errors={errors} name="email" render={renderErrorMessage} />
     </div>
   </>
 );
 
 const Address = ({ form }: { form: UseFormReturn<RegisterSchemaT> }) => {
-  const { register, control } = form;
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = form;
   return (
     <div className="flex flex-col items-stretch gap-4">
       <div className="flex gap-4">
         <div className="flex grow flex-col items-stretch gap-2">
           <label htmlFor="address.street">Calle</label>
           <InputText {...register("address.street")} placeholder="Av. Mitre" />
+          <ErrorMessage
+            errors={errors}
+            name="address.street"
+            render={renderErrorMessage}
+          />
         </div>
         <div className="flex grow flex-col gap-2">
           <label htmlFor="address.streetNumber">Altura</label>
@@ -66,6 +97,11 @@ const Address = ({ form }: { form: UseFormReturn<RegisterSchemaT> }) => {
               />
             )}
           />
+          <ErrorMessage
+            errors={errors}
+            name="address.streetNumber"
+            render={renderErrorMessage}
+          />
         </div>
       </div>
       <div className="flex gap-4">
@@ -75,12 +111,22 @@ const Address = ({ form }: { form: UseFormReturn<RegisterSchemaT> }) => {
             {...register("address.province")}
             placeholder="Buenos Aires"
           />
+          <ErrorMessage
+            errors={errors}
+            name="address.province"
+            render={renderErrorMessage}
+          />
         </div>
         <div className="flex grow flex-col gap-2">
           <label htmlFor="address.city">Ciudad</label>
           <InputText
             {...register("address.city")}
             placeholder="Capital Federal"
+          />
+          <ErrorMessage
+            errors={errors}
+            name="address.city"
+            render={renderErrorMessage}
           />
         </div>
       </div>
@@ -90,6 +136,11 @@ const Address = ({ form }: { form: UseFormReturn<RegisterSchemaT> }) => {
           <InputText
             {...register("address.district")}
             placeholder="Haedo / 3"
+          />
+          <ErrorMessage
+            errors={errors}
+            name="address.district"
+            render={renderErrorMessage}
           />
         </div>
         <div className="flex grow flex-col gap-2">
@@ -107,6 +158,11 @@ const Address = ({ form }: { form: UseFormReturn<RegisterSchemaT> }) => {
               />
             )}
           />
+          <ErrorMessage
+            errors={errors}
+            name="address.postalCode"
+            render={renderErrorMessage}
+          />
         </div>
       </div>
     </div>
@@ -116,9 +172,11 @@ const Address = ({ form }: { form: UseFormReturn<RegisterSchemaT> }) => {
 const Guarantors = ({
   register,
   guarantors,
+  errors,
 }: {
   register: RegisterT;
   guarantors: GuarantorT;
+  errors: ErrorsT;
 }) => (
   <>
     <Accordion>
@@ -133,18 +191,23 @@ const Guarantors = ({
         >
           <div className="relative">
             <button
-              className="absolute right-4 top-4"
+              className="absolute right-2"
               onClick={() => guarantors.remove(index)}
             >
               <i className="pi pi-times" />
             </button>
-            <div className="flex flex-col gap-4 rounded-md border p-4">
+            <div className="flex flex-col gap-4 p-4">
               <div className="flex gap-4">
                 <div className="flex w-full flex-col items-stretch gap-2">
                   <label htmlFor={`guarantors.${index}.name`}>Nombre</label>
                   <InputText
                     {...register(`guarantors.${index}.name`)}
                     placeholder="Jorge"
+                  />
+                  <ErrorMessage
+                    errors={errors}
+                    name={`guarantors.${index}.name`}
+                    render={renderErrorMessage}
                   />
                 </div>
                 <div className="flex flex-col gap-2">
@@ -153,6 +216,11 @@ const Guarantors = ({
                     {...register(`guarantors.${index}.surname`)}
                     placeholder="Pérez"
                   />
+                  <ErrorMessage
+                    errors={errors}
+                    name={`guarantors.${index}.surname`}
+                    render={renderErrorMessage}
+                  />
                 </div>
               </div>
               <div className="flex flex-col gap-2">
@@ -160,6 +228,11 @@ const Guarantors = ({
                 <InputText
                   {...register(`guarantors.${index}.dni`)}
                   placeholder="99999999"
+                />
+                <ErrorMessage
+                  errors={errors}
+                  name={`guarantors.${index}.dni`}
+                  render={renderErrorMessage}
                 />
               </div>
               <div className="flex flex-col gap-2">
@@ -170,12 +243,22 @@ const Guarantors = ({
                   {...register(`guarantors.${index}.phone`)}
                   placeholder="+54 9 11 1234-5678"
                 />
+                <ErrorMessage
+                  errors={errors}
+                  name={`guarantors.${index}.phone`}
+                  render={renderErrorMessage}
+                />
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor={`guarantors.${index}.email`}>Email</label>
                 <InputText
                   {...register(`guarantors.${index}.email`)}
                   placeholder="ejemplo@gmail.com"
+                />
+                <ErrorMessage
+                  errors={errors}
+                  name={`guarantors.${index}.email`}
+                  render={renderErrorMessage}
                 />
               </div>
             </div>
@@ -207,18 +290,28 @@ type UserProfileProps = {
 
 export const UserProfile = (_: UserProfileProps) => {
   const { form, guarantors } = useRegister();
-  const { register } = form;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = form;
 
+  const onSubmit = (data: RegisterSchemaT) => console.log(data);
+
+  console.log(errors);
   return (
     <main className="md:mx-auto md:max-w-xl md:p-4">
       <Card title="Tu perfil">
-        <div className="flex flex-col items-stretch gap-8">
+        <form
+          className="flex flex-col items-stretch gap-8"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <TabView>
             <TabPanel
               header="Datos Personales"
               className="flex flex-col items-stretch justify-start gap-4 "
             >
-              <PersonalInfo register={register} />
+              <PersonalInfo register={register} errors={errors} />
             </TabPanel>
             <TabPanel header="Direccion">
               <Address form={form} />
@@ -227,11 +320,15 @@ export const UserProfile = (_: UserProfileProps) => {
               header="Garantes"
               className="flex flex-col items-stretch justify-start gap-4 "
             >
-              <Guarantors register={register} guarantors={guarantors} />
+              <Guarantors
+                register={register}
+                guarantors={guarantors}
+                errors={errors}
+              />
             </TabPanel>
           </TabView>
-          <Button label="Actualizar perfil" />
-        </div>
+          <Button text raised type="submit" label="Actualizar datos" />
+        </form>
       </Card>
     </main>
   );

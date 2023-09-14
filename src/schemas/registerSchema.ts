@@ -1,30 +1,30 @@
 import { z } from "zod";
 
 const addressSchema = z.object({
-  street: z.string(),
-  streetNumber: z.number(),
-  province: z.string(),
-  city: z.string(),
-  district: z.string(),
-  postalCode: z.number(),
+  street: z.string().min(1, "La calle no puede estar vacia"),
+  streetNumber: z.number().optional(),
+  province: z.string().min(1, "La provincia no puede estar vacia"),
+  city: z.string().min(1, "La ciudad no puede estar vacia"),
+  district: z.string().min(1, "La localidad no puede estar vacia"),
+  postalCode: z.number().min(1, "El codigo postal no puede estar vacio"),
   additionalData: z.string().optional(),
 });
 
 export const registerSchema = z.object({
   id: z.string(),
-  name: z.string(),
-  surname: z.string(),
+  name: z.string().min(1, "El nombre no puede estar vacio"),
+  surname: z.string().min(1, "El apellido no puede estar vacio"),
   dni: z.string().length(8, "El DNI debe tener 8 dígitos"),
-  phone: z.string(),
-  email: z.string().email(),
-  address: addressSchema.optional(),
+  phone: z.string().min(1, "El telefono no puede estar vacio"),
+  email: z.string().email("El mail no es valido"),
+  address: addressSchema,
   guarantors: z.array(
     z.object({
-      name: z.string(),
-      surname: z.string(),
-      dni: z.string(),
-      phone: z.string(),
-      email: z.string().email(),
+      name: z.string().min(1, "El nombre no puede estar vacio"),
+      surname: z.string().min(1, "El apellido no puede estar vacio"),
+      dni: z.string().length(8, "El DNI debe tener 8 dígitos"),
+      phone: z.string().min(1, "El telefono no puede estar vacio"),
+      email: z.string().email("El mail no es valido"),
       address: addressSchema.optional(),
     })
   ),
