@@ -6,7 +6,7 @@ export const usersRouter = createTRPCRouter({
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const { id } = input;
-      return ctx.prisma.user.findFirst({ where: { id } });
+      return ctx.prisma.user.findFirst({ where: { clerkId: id } });
     }),
 
   createUser: publicProcedure

@@ -1,24 +1,23 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider     = "mysql"
+  provider     = "postgresql"
   url          = env("DATABASE_URL")
-  relationMode = "prisma"
+  // relationMode = "prisma"
 }
 
 model User {
-  id                String              @id
-  addressId         String?             @unique
+  id                Int                 @id 
+  clerkId String?
+  addressId         Int?             @map("addressid")
+  userTypeId        Int              @default(0) @map("usertypeid")
+  birthdate         DateTime?
+  cuil_cuit         String?             @db.VarChar(11)
+  names             String?
   address           Address?            @relation(fields: [addressId], references: [id])
-  userTypeId        String              @unique
   userType          UserType            @relation(fields: [userTypeId], references: [id])
-  birthdate         DateTime
-  cuit              String?             @db.VarChar(11)
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
   tutorialStep      Int                 @default(1)
@@ -28,7 +27,7 @@ model User {
 }
 
 model UserType {
-  id          String   @id @default(cuid())
+  id          Int      @id 
   createdAt   DateTime @default(now())
   description String   @unique
   users       User[]
@@ -37,52 +36,54 @@ model UserType {
 }
 
 model UserInSavingsPlan {
-  id          String           @id @default(cuid())
-  planId      String
-  userId      String
-  user        User             @relation(fields: [userId], references: [id])
-  savingsPlan SavingsPlan      @relation(fields: [planId], references: [id])
+  id          Int         @id 
+  planId      Int         @map("planid")
+  userId      Int         @map("userid")
+  user        User        @relation(fields: [userId], references: [id])
+  savingsPlan SavingsPlan @relation(fields: [planId], references: [id])
   invoices    PaymentInvoice[]
 
   @@unique([planId, userId], map: "plan_id_user_id_unique")
-  @@unique([userId, planId])
-  @@index([userId])
+  @@unique([userId, planId], map: "savings_plans_users_userId_planId_key")
+  @@index([userId], map: "savings_plans_users_userId_idx")
   @@map("savings_plans_users")
 }
 
 model SavingsPlan {
-  id                String              @id @default(cuid())
-  statusId          String
-  status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
-  usersInPlan       UserInSavingsPlan[]
-  portfolioId       String
-  portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
-  title             String
-  description       String
+  id                Int                 @id
+  statusId          Int @map("statusid")
+  portfolioId       BigInt  @map("portfolioid")
+  automotiveId      Int     @map("automotiveid")
+  description       String?
   plan_months       Int
   plan_total_months Int
-  paymentMethodId   String
-  paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
-  startDate         DateTime
-  endDate           DateTime
-  carModelId        String
-  carModel          CarModel            @relation(fields: [carModelId], references: [id])
-  movingValue       Int
+  paymentMethodId   Int?    @map("paymentmethodid")
+  startDate         DateTime? @map("startdate")
+  endDate           DateTime? @map("enddate")
+  carModelId        BigInt  @map("carmodelid")
+  movingValue       String @map("movingvalue")
+  automotive Automotive @relation(fields: [automotiveId], references: [id])
+  status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
+  usersInPlan       UserInSavingsPlan[]
+  // portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
+  paymentMethod     PaymentMethod?       @relation(fields: [paymentMethodId], references: [id])
+  // carModel          CarModel            @relation(fields: [carModelId], references: [id])
 
-  @@index([statusId])
-  @@index([paymentMethodId])
-  @@index([portfolioId])
-  @@index([carModelId])
+  @@index([statusId], map: "savings_plans_statusId_idx")
+  @@index([paymentMethodId], map: "savings_plans_paymentMethodId_idx")
+  @@index([portfolioId], map: "savings_plans_portfolioId_idx")
+  @@index([carModelId], map: "savings_plans_carModelId_idx")
+  @@index([automotiveId], map: "savings_plans_automotiveId_idx")
   @@map("savings_plans")
 }
 
 model PaymentInvoice {
   id                String            @id @default(cuid())
   createdAt         DateTime          @default(now())
-  planId            String
-  userId            String
+  planId            Int
+  userId            Int
   userInSavingsPlan UserInSavingsPlan @relation(fields: [userId, planId], references: [userId, planId])
-  paymentMethodId   String
+  paymentMethodId   Int
   paymentMethod     PaymentMethod     @relation(fields: [paymentMethodId], references: [id])
   amountArs         Decimal           @db.Decimal()
   paymentDate       DateTime
@@ -94,51 +95,46 @@ model PaymentInvoice {
 }
 
 model PaymentMethod {
-  id           String           @id @default(cuid())
-  createdAt    DateTime         @default(now())
-  description  String
+  id           Int           @id
+  createdAt    DateTime      @default(now()) @map("createdat")
+  description  String        @unique(map: "payment_method_description_unique")
   invoices     PaymentInvoice[]
   savingsPlans SavingsPlan[]
 
-  @@unique([description], map: "payment_method_description_unique")
   @@map("payment_methods")
 }
 
 model SavingsPlanStatus {
-  id           String        @id @default(cuid())
-  description  String
+  id           Int           @id
+  description  String        @unique(map: "savings_plan_status_description_unique")
   savingsPlans SavingsPlan[]
 
-  @@unique([description], map: "savings_plan_status_description_unique")
   @@map("savings_plan_status")
 }
 
 model Car {
-  id         String     @id @default(cuid())
-  plate      String
-  userId     String
-  user       User       @relation(fields: [userId], references: [id])
-  is_awarded Boolean
-  is_drawn   Boolean
-  carPhoto   CarPhoto[]
-  carModelId String
-  carModel   CarModel   @relation(fields: [carModelId], references: [id])
+  id         BigInt      @id @default(autoincrement())
+  plate      String?  
+  userId     Int @map("userid")
+  is_awarded Boolean @default(false)
+  is_drawn   Boolean @default(false)
+  carModelId Int @map("carmodelid")
+  user       User     @relation(fields: [userId], references: [id])
+  carModel   CarModel @relation(fields: [carModelId], references: [id])
 
-  @@unique([plate], map: "car_plate_unique")
-  @@index([userId])
-  @@index([carModelId])
+  @@index([userId], map: "cars_userId_idx")
+  @@index([carModelId], map: "cars_carModelId_idx")
   @@map("cars")
 }
 
 model CarModel {
-  id           String        @id @default(cuid())
-  description  String
-  amountDoors  Int           @default(4)
-  carPhotos    CarPhoto[]
-  savingsPlans SavingsPlan[]
+  id           Int           @id
+  description  String        @unique(map: "car_model_description_unique")
+  amountdoors  Int           @default(4)
+  carPhotos CarPhoto[]
+  // savingsPlans SavingsPlan[]
   cars         Car[]
 
-  @@unique([description], map: "car_model_description_unique")
   @@map("car_models")
 }
 
@@ -146,68 +142,90 @@ model CarPhoto {
   id         String    @id @default(cuid())
   url        String    @db.Text
   epigraph   String?   @db.Text
-  carId      String?
-  car        Car?      @relation(fields: [carId], references: [id])
-  carModelId String?
+  carModelId Int?
   carModel   CarModel? @relation(fields: [carModelId], references: [id])
 
-  @@index([carId])
   @@index([carModelId])
   @@map("car_photos")
 }
 
 model Portfolio {
-  id              String         @id @default(cuid())
-  createdAt       DateTime       @default(now())
-  carDealershipId String?
-  carDealership   CarDealership? @relation(fields: [carDealershipId], references: [id])
-  automotiveId    String?
+  id              Int            @id 
+  createdAt       DateTime       @default(now()) @map("createdat")
+  carDealershipId BigInt?  @map("cardealershipid")
+  automotiveId    Int @map("automotiveid")
+  groupId         Int @map("groupid")
+  orderid         Int
   automotive      Automotive?    @relation(fields: [automotiveId], references: [id])
-  savingsPlans    SavingsPlan[]
+  // savingsPlans    SavingsPlan[]
 
-  @@index([carDealershipId])
   @@index([automotiveId])
+  @@index([carDealershipId])
   @@map("portfolios")
 }
 
 model CarDealership {
-  id          String      @id @default(cuid())
-  description String      @db.Text
-  addressId   String
-  address     Address     @relation(fields: [addressId], references: [id])
-  cuit        String      @db.VarChar(11)
-  code        Int
-  portfolios  Portfolio[]
+  id            String      @id @default(cuid())
+  description   String
+  addressId     Int @map("addressid")
+  cuit          String      @db.VarChar(11)
+  code          Int
+  automotivesId Int? @map("automotivesid")
+  automotive Automotive? @relation(fields: [automotivesId], references: [id])
+  address       Address     @relation(fields: [addressId], references: [id])
 
   @@index([addressId])
   @@map("car_dealerships")
 }
 
 model Automotive {
-  id          String      @id @default(cuid())
-  description String      @db.Text
-  logo        String      @db.Text
-  createdAt   DateTime    @default(now())
-  addressId   String
-  address     Address     @relation(fields: [addressId], references: [id])
+  id          Int         @id
+  description String
+  logo        String
+  createdAt   DateTime    @default(now()) @map("createdat")
+  addressId   Int?  @map("addressid")
+  address     Address?     @relation(fields: [addressId], references: [id])
   portfolios  Portfolio[]
+  carDealership CarDealership[]
+  savingsPlans SavingsPlan[]
 
   @@index([addressId])
   @@map("automotives")
 }
 
 model Address {
-  id             String          @id @default(cuid())
+  id             Int          @id
   street         String
-  streetNumber   Int
+  streetNumber   Int @map("streetnumber")
   province       String
   city           String
   district       String
-  postalCode     Int
-  additionalData String
+  postalCode     Int  @map("postalcode")
+  additionalData String @map("additionaldata")
   users          User[]
   carDealerships CarDealership[]
   automotives    Automotive[]
 
   @@map("addresses")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model vw_stg {
+  grupo             Int?
+  orden             Int?
+  ncuota            Int?
+  mesesplan         Int?
+  modelosuscripto   String?
+  valormovil        String?
+  cuotapagas        Int?
+  cuotasanticipadas Int?
+  cuotasimpagas     Int?
+  cuotasavencer     Int?
+  estado            String?
+  nombre            String?
+  persona           String?
+  nconcesionario    Int?
+  cuil_cuit         String? @db.VarChar(11)
+
+  @@ignore
 }
