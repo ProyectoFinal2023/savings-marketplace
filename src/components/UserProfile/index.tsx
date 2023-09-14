@@ -7,6 +7,7 @@ import { type RegisterSchemaT } from "~/schemas/registerSchema";
 import { Address } from "./tabs/Address";
 import { Guarantors } from "./tabs/Guarantors";
 import { PersonalInfo } from "./tabs/PersonalInfo";
+import { ErrorMessage } from "../ErrorMessage";
 
 type UserProfileProps = {
   className?: string;
@@ -17,16 +18,19 @@ export const UserProfile = (_: UserProfileProps) => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isValid, isSubmitted },
   } = form;
 
   const onSubmit = (data: RegisterSchemaT) => console.log(data);
-
+  console.log(errors);
   return (
     <main className="md:mx-auto md:max-w-xl md:p-4">
-      <Card title="Tu perfil">
+      <Card
+        title="Tu perfil"
+        subTitle="Para poder comprar/vender un plan de ahorro, debes completar los siguientes datos:"
+      >
         <form
-          className="flex flex-col items-stretch gap-8"
+          className="flex flex-col items-stretch gap-4"
           onSubmit={handleSubmit(onSubmit)}
         >
           <TabView>
@@ -46,7 +50,14 @@ export const UserProfile = (_: UserProfileProps) => {
               <Guarantors form={form} guarantors={guarantors} />
             </TabPanel>
           </TabView>
-          <Button text raised type="submit" label="Actualizar datos" />
+          <div className="flex flex-col items-stretch gap-2">
+            <Button text raised type="submit" label="Actualizar datos" />
+            {isSubmitted && !isValid && (
+              <p className="text-center text-red-500">
+                Algunos datos tienen errores. Por favor revisar el formulario.
+              </p>
+            )}
+          </div>
         </form>
       </Card>
     </main>
