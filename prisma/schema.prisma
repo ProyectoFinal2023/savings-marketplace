@@ -21,10 +21,10 @@ model User {
   name String?
   surname String?
   cuit              String?             @db.VarChar(11)
+  tutorialDone      Boolean             @default(false)
+  tutorialStep      Int                 @default(1)
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
-  tutorialStep      Int                 @default(1)
-  tutorialDone      Boolean             @default(false)
   guarantors Guarantor[]
 
   @@map("users")
@@ -154,6 +154,7 @@ model CarModel {
   carPhotos    CarPhoto[]
   savingsPlans SavingsPlan[]
   cars         Car[]
+  carAttributes Json?
 
   @@map("car_models")
 }
@@ -171,14 +172,6 @@ model CarPhoto {
   @@index([carModelId])
   @@map("car_photos")
 }
-
-// model ImageFile {
-//   id       Int     @id @default(autoincrement())
-//   url      String
-//   alt_text String?
-
-//   @@map("image_files")
-// }
 
 model Portfolio {
   id              String         @id @default(cuid())
@@ -235,4 +228,18 @@ model Address {
   guarantors Guarantor[]
 
   @@map("addresses")
+}
+
+model Guarantors {
+  id        Int     @id @default(autoincrement())
+  userId    String
+  name      String
+  surname   String
+  phone     String
+  email     String
+  cuit      String
+  addressId String?
+
+  @@index([addressId])
+  @@index([userId])
 }

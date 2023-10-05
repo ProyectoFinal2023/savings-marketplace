@@ -19,6 +19,8 @@ export type DropdownOptionT = {
 
 export const usePlansList = (search: SearchParams) => {
   const { push } = useRouter();
+  const [pageLoading, setPageLoading] = useState(false);
+
   const dropdownOptions: DropdownOptionT[] = [
     {
       text: "Vista Previa",
@@ -31,11 +33,13 @@ export const usePlansList = (search: SearchParams) => {
             header={
               <button
                 onClick={() => {
-                  void push(
-                    routePaths.planDetail({
-                      id: plan.id,
-                    })
-                  );
+                  setPageLoading(true);
+                  if (!pageLoading)
+                    void push(
+                      routePaths.planDetail({
+                        id: plan.id,
+                      })
+                    );
                 }}
               >
                 <Image
