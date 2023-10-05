@@ -9,6 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { type PlanList, type SearchParams } from "~/types/plans";
 import { routePaths } from "~/utils/routes";
 import { z } from "zod";
+import { useState } from "react";
 
 type PlansViewProps = {
   search: SearchParams;
@@ -47,6 +48,8 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
 
   const onSubmit = void handleSubmit(onSearch);
 
+  const [pageLoading, setPageLoading] = useState(false);
+
   return (
     <article className="mx-auto h-full w-10/12">
       <header className="py-5">
@@ -70,14 +73,17 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
                 width={380}
                 height={256}
                 className=" h-64 object-cover"
-                onClick={() => push(
-                  routePaths.planDetail({
-                    id: plan.id,
-                  })
-                )}
+                onClick={() => {
+                  setPageLoading(true);
+                  if (!pageLoading)
+                    void push(
+                    routePaths.planDetail({
+                      id: plan.id,
+                    })
+                )}}
               />
             }
-            className=" shrink-0 basis-1/3-gap-6"
+            className="shrink-0 basis-1/3-gap-6 cursor-pointer"
           />
         ))}
       </section>

@@ -11,11 +11,18 @@ datasource db {
 model User {
   id                String              @id
   addressId         String?             @unique
-  address           Address?            @relation(fields: [addressId], references: [id])
-  userTypeId        String              @unique
-  userType          UserType            @relation(fields: [userTypeId], references: [id])
-  birthdate         DateTime
+  userTypeId        String
+  birthdate         DateTime?
   cuit              String?             @db.VarChar(11)
+  tutorialDone      Boolean             @default(false)
+  tutorialStep      Int                 @default(1)
+  clerkId           String?
+  email             String?
+  name              String?
+  phone             String?
+  surname           String?
+  address           Address?            @relation(fields: [addressId], references: [id])
+  userType          UserType            @relation(fields: [userTypeId], references: [id])
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
 
@@ -129,6 +136,7 @@ model CarModel {
   carPhotos    CarPhoto[]
   savingsPlans SavingsPlan[]
   cars         Car[]
+  carAttributes Json?
 
   @@map("car_models")
 }
@@ -146,14 +154,6 @@ model CarPhoto {
   @@index([carModelId])
   @@map("car_photos")
 }
-
-// model ImageFile {
-//   id       Int     @id @default(autoincrement())
-//   url      String
-//   alt_text String?
-
-//   @@map("image_files")
-// }
 
 model Portfolio {
   id              String         @id @default(cuid())
@@ -198,15 +198,29 @@ model Automotive {
 model Address {
   id             String          @id @default(cuid())
   street         String
-  streetNumber   Int
+  streetNumber   Int?
   province       String
   city           String
   district       String
   postalCode     Int
-  additionalData String
+  additionalData String?
   users          User[]
   carDealerships CarDealership[]
   automotives    Automotive[]
 
   @@map("addresses")
+}
+
+model Guarantors {
+  id        Int     @id @default(autoincrement())
+  userId    String
+  name      String
+  surname   String
+  phone     String
+  email     String
+  cuit      String
+  addressId String?
+
+  @@index([addressId])
+  @@index([userId])
 }

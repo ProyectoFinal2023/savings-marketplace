@@ -70,12 +70,21 @@ const PlanView = ({ plan }: Props) => {
     console.log('Click submit burtton');
   }
 
+  const currencyFormat = (cash: number) => (
+    String(new Intl.NumberFormat('en-AR', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(cash)).split('').slice(0, -3).join('')
+  )
+
+  console.log('asda', plan.carModel);
+
   return (
     <Card
       pt={{
         body: { className: "shadow" },
       }}
-      // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
+    // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
     >
       <div className="grid grid-cols-2 justify-center gap-4">
         <div className="p-d-flex p-jc-center p-mt-5">
@@ -95,15 +104,19 @@ const PlanView = ({ plan }: Props) => {
               {plan.carModel.description}
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
-            <span className="text-xl">${plan.movingValue}</span>
+            <div className="text-black row">
+              <p className="text-3xl">{currencyFormat(plan.movingValue)}
+              </p>
+              <p className="mt-2">{plan.plan_total_months} cuotas de {currencyFormat(plan.movingValue / plan.plan_total_months)}</p>
+            </div>
             <Button
-              severity="secondary"
+              severity="info"
               size="large"
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
               onClick={handleClickPlan}
             >
-              Reservar Plan
+              Solicitar Plan
             </Button>
           </div>
         </div>
