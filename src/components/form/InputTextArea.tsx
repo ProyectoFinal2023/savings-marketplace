@@ -1,5 +1,4 @@
 import { InputTextarea as PrimeInputTextarea } from "primereact/inputtextarea";
-import { InputText as PrimeInputText } from "primereact/inputtext";
 import {
   type FieldValues,
   type Path,
