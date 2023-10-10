@@ -1,5 +1,5 @@
 import React from "react";
-import { CarPhoto as CarPhotoModel } from "@prisma/client";
+import type { CarPhoto as CarPhotoModel, Prisma } from "@prisma/client";
 
 import { Card } from "primereact/card";
 import { Galleria } from "primereact/galleria";
@@ -95,6 +95,7 @@ const PlanView = ({ plan }: Props) => {
             thumbnail={thumbnailTemplate}
             thumbnailsPosition="left"
             numVisible={4}
+            className="bg-black"
           />
         </div>
         {/* TODO - Responsivness */}
@@ -124,23 +125,30 @@ const PlanView = ({ plan }: Props) => {
       <div className="grid py-4 text-justify">
         <Fieldset legend={legendTemplate}>{plan.description}</Fieldset>
       </div>
-      <div className="grid grid-cols-6">
-        <div className="col-start-3 col-span-2">
-          <span className="font-bold">Características</span>
-          <table className="table-auto rounded border-2 border-solid border-[#ededed] text-[14px] w-full">
-            <tbody>
-              <tr className="bg-[#0000000a]">
-                <th className="px-6 py-4">Cantidad de cuotas</th>
-                <td className="px-6 py-4">{plan.plan_total_months}</td>
-              </tr>
-              <tr className="bg-[#fff]">
-                <th className="px-6 py-4">Cantidad de Puertas</th>
-                <td className="px-6 py-4">{plan.carModel.amountDoors}</td>
-              </tr>
-            </tbody>
-          </table>
+      <section id="vehicle-carachteristics" className="contents">
+        <div className="block">
+          <div className="col-start-1 col-span-12 mb-2">
+            <span className="text-md md:text-2xl">Características del vehículo</span>
+          </div>
+          <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
+            {Object.entries(plan.carModel.carAttributes as Prisma.JsonObject).map(([tableName, attributes]) => (
+              <div className="col-auto w-full md:w-max" key={tableName}>
+                <span className="font-bold">{tableName}</span>
+                <table className="table-auto rounded border-2 border-solid border-[#ededed] text-[14px] mt-2">
+                  <tbody>
+                    {attributes && Object.entries(attributes)?.map(([attrName, attr], index) => (
+                      <tr className={index % 2 !== 0 ? "bg-[#0000000a]" : "bg-[#fff]"} key={attrName}>
+                        <th className="px-6 py-4 text-left">{attrName}</th>
+                        <td className="px-6 py-4 text-left">{attr}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      </section>
     </Card>
   );
 };
