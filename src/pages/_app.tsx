@@ -8,6 +8,8 @@ import "primeicons/primeicons.css";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
 import { ToastContainer } from "react-toastify";
+import { ProgressBar } from "primereact/progressbar";
+import LoadingProvider from "~/components/LoadingProvider";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -22,7 +24,9 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           <link rel="icon" href="/favicon.ico" />
         </Head>
         <ToastContainer />
-        <Component {...pageProps} />
+        <LoadingProvider>
+          <Component {...pageProps} />
+        </LoadingProvider>
       </ClerkProvider>
     </>
   );

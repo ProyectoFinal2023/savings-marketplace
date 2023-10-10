@@ -8,9 +8,11 @@ import { type RegisterSchemaT } from "~/schemas/registerSchema";
 export const Address = ({
   form,
   prefix,
+  isLoading,
 }: {
   form: UseFormReturn<RegisterSchemaT>;
   prefix?: string;
+  isLoading: boolean;
 }) => {
   const {
     register,
@@ -28,6 +30,7 @@ export const Address = ({
           label="Calle"
           placeholder="Av. Mitre"
           errors={errors}
+          disabled={isLoading}
         />
         <InputNumber
           control={control}
@@ -36,6 +39,7 @@ export const Address = ({
           placeholder="123"
           errors={errors}
           required={true}
+          disabled={isLoading}
         />
       </div>
       <div className="flex gap-4">
@@ -45,6 +49,7 @@ export const Address = ({
           label="Provincia"
           placeholder="Buenos Aires"
           errors={errors}
+          disabled={isLoading}
         />
         <InputText
           register={register}
@@ -52,6 +57,7 @@ export const Address = ({
           label="Ciudad"
           placeholder="Capital Federal"
           errors={errors}
+          disabled={isLoading}
         />
       </div>
       <div className="flex gap-4">
@@ -61,6 +67,7 @@ export const Address = ({
           label="Localidad / Comuna"
           placeholder="Haedo / 3"
           errors={errors}
+          disabled={isLoading}
         />
         <InputNumber
           control={control}
@@ -68,6 +75,7 @@ export const Address = ({
           label="Codigo Postal"
           placeholder="1234"
           errors={errors}
+          disabled={isLoading}
         />
       </div>
       <InputTextArea
@@ -77,6 +85,7 @@ export const Address = ({
         label="Datos Adicionales"
         required={false}
         errors={errors}
+        disabled={isLoading}
       />
     </div>
   );
