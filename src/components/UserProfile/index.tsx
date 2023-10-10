@@ -3,7 +3,6 @@ import { Button } from "primereact/button";
 import { Card } from "primereact/card";
 import { TabPanel, TabView } from "primereact/tabview";
 import { useRegister } from "~/hooks/useRegister";
-import { type RegisterSchemaT } from "~/schemas/registerSchema";
 import { type UserInfoT } from "~/types/userInfo";
 import { Address } from "./tabs/Address";
 import { Guarantors } from "./tabs/Guarantors";
