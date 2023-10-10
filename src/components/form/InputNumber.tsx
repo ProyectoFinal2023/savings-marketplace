@@ -15,12 +15,21 @@ type InputNumberProps<T extends FieldValues> = {
   label: string;
   placeholder: string;
   required?: boolean;
+  disabled?: boolean;
 };
 
 export const InputNumber = <T extends FieldValues>(
   props: InputNumberProps<T>
 ) => {
-  const { name, control, errors, label, placeholder, required = true } = props;
+  const {
+    name,
+    control,
+    errors,
+    label,
+    placeholder,
+    required = true,
+    disabled,
+  } = props;
 
   return (
     <div className="flex grow flex-col gap-2">
@@ -38,6 +47,7 @@ export const InputNumber = <T extends FieldValues>(
             onBlur={field.onBlur}
             useGrouping={false}
             placeholder={placeholder}
+            disabled={disabled}
           />
         )}
       />

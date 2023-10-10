@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
+import { useContext } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { LoadingContext } from "~/components/LoadingProvider";
 import { type RegisterSchemaT, registerSchema } from "~/schemas/registerSchema";
 import { type UserInfoT } from "~/types/userInfo";
 import { api } from "~/utils/api";
 
 export const useRegister = (props: { user: UserInfoT; clerkId: string }) => {
+  const { setProgressBar } = useContext(LoadingContext);
   const { push } = useRouter();
   const form = useForm<RegisterSchemaT>({
     resolver: zodResolver(registerSchema),
@@ -49,15 +52,22 @@ export const useRegister = (props: { user: UserInfoT; clerkId: string }) => {
     control: form.control,
     name: "guarantors",
   });
-  const { mutate: upsertUser } = api.users.upsertUser.useMutation({
+  const { mutate: upsertUser, isLoading } = api.users.upsertUser.useMutation({
     onSuccess: () => {
+      setProgressBar(false);
       toast.success("Datos actualizados con éxito.");
-      push("/");
+      void push("/");
     },
     onError: () => {
+      setProgressBar(false);
       toast.error("Hubo un error. Intente nuevamente más tarde.");
     },
   });
 
-  return { form, guarantors, upsertUser };
+  const onSubmit = (data: RegisterSchemaT) => {
+    setProgressBar(true);
+    upsertUser(data);
+  };
+
+  return { form, guarantors, upsertUser, isLoading, onSubmit };
 };

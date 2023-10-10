@@ -17,7 +17,7 @@ export const usersRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { address, carAsPayment, guarantors, id, ...user } = input;
 
-      await ctx.prisma.$transaction(async () => {
+      return ctx.prisma.$transaction(async () => {
         const res = await ctx.prisma.user.upsert({
           create: {
             ...user,

@@ -5,18 +5,21 @@ import { type ErrorsT, type RegisterT } from "~/types/userInfo";
 export const PersonalInfo = ({
   register,
   errors,
+  isLoading,
 }: {
   register: RegisterT;
   errors: ErrorsT;
+  isLoading: boolean;
 }) => (
   <>
-    <div className="flex gap-4 flex-wrap">
+    <div className="flex flex-wrap gap-4">
       <InputText
         register={register}
         placeholder="Jorge"
         name="name"
         label="Nombre"
         errors={errors}
+        disabled={isLoading}
       />
       <InputText
         register={register}
@@ -24,6 +27,7 @@ export const PersonalInfo = ({
         name="surname"
         label="Apellido"
         errors={errors}
+        disabled={isLoading}
       />
     </div>
     <InputText
@@ -33,6 +37,7 @@ export const PersonalInfo = ({
       maxLength={11}
       placeholder="99999999999"
       errors={errors}
+      disabled={isLoading}
     />
     <InputText
       register={register}
@@ -40,6 +45,7 @@ export const PersonalInfo = ({
       label="N. de Celular"
       placeholder="+54 9 11 1234-5678"
       errors={errors}
+      disabled={isLoading}
     />
     <InputText
       register={register}
@@ -47,6 +53,7 @@ export const PersonalInfo = ({
       label="Email"
       placeholder="ejemplo@gmail.com"
       errors={errors}
+      disabled={isLoading}
     />
   </>
 );

@@ -10,9 +10,11 @@ import { Address } from "./Address";
 export const Guarantors = ({
   guarantors,
   form,
+  isLoading,
 }: {
   form: UseFormReturn<RegisterSchemaT>;
   guarantors: GuarantorT;
+  isLoading: boolean;
 }) => {
   const {
     register,
@@ -66,6 +68,7 @@ export const Guarantors = ({
                       name={`${prefix}.name` as "guarantors.0.name"}
                       label="Nombre"
                       errors={errors}
+                      disabled={isLoading}
                     />
                     <InputText
                       register={register}
@@ -73,6 +76,7 @@ export const Guarantors = ({
                       name={`${prefix}.surname` as "guarantors.0.surname"}
                       label="Apellido"
                       errors={errors}
+                      disabled={isLoading}
                     />
                   </div>
                   <InputText
@@ -82,6 +86,7 @@ export const Guarantors = ({
                     label="CUIT"
                     errors={errors}
                     maxLength={11}
+                    disabled={isLoading}
                   />
                   <InputText
                     register={register}
@@ -89,6 +94,7 @@ export const Guarantors = ({
                     name={`${prefix}.phone` as "guarantors.0.phone"}
                     label="N. de Celular"
                     errors={errors}
+                    disabled={isLoading}
                   />
                   <InputText
                     register={register}
@@ -96,8 +102,13 @@ export const Guarantors = ({
                     name={`${prefix}.email` as "guarantors.0.email"}
                     label="Email"
                     errors={errors}
+                    disabled={isLoading}
                   />
-                  <Address prefix={`guarantors.${index}`} form={form} />
+                  <Address
+                    prefix={`guarantors.${index}`}
+                    form={form}
+                    isLoading={isLoading}
+                  />
                 </div>
               </div>
             </AccordionTab>
