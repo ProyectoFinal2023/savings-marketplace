@@ -3,9 +3,13 @@ import { type AppType } from "next/app";
 import Head from "next/head";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/viva-light/theme.css";
+import "react-toastify/dist/ReactToastify.css";
 import "primeicons/primeicons.css";
 import "~/styles/globals.css";
 import { api } from "~/utils/api";
+import { ToastContainer } from "react-toastify";
+import { ProgressBar } from "primereact/progressbar";
+import LoadingProvider from "~/components/LoadingProvider";
 
 const MyApp: AppType = ({ Component, pageProps }) => {
   return (
@@ -19,7 +23,10 @@ const MyApp: AppType = ({ Component, pageProps }) => {
           />
           <link rel="icon" href="/favicon.ico" />
         </Head>
-        <Component {...pageProps} />
+        <ToastContainer />
+        <LoadingProvider>
+          <Component {...pageProps} />
+        </LoadingProvider>
       </ClerkProvider>
     </>
   );

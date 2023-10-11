@@ -9,24 +9,42 @@ datasource db {
 }
 
 model User {
-  id                String              @id
+  id                String              @id @default(cuid())
   addressId         String?             @unique
+  address           Address?            @relation(fields: [addressId], references: [id])
   userTypeId        String
+  userType          UserType            @relation(fields: [userTypeId], references: [id])
   birthdate         DateTime?
+  clerkId String?
+  phone String?
+  email String?
+  name String?
+  surname String?
   cuit              String?             @db.VarChar(11)
   tutorialDone      Boolean             @default(false)
   tutorialStep      Int                 @default(1)
-  clerkId           String?
-  email             String?
-  name              String?
-  phone             String?
-  surname           String?
-  address           Address?            @relation(fields: [addressId], references: [id])
-  userType          UserType            @relation(fields: [userTypeId], references: [id])
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
+  guarantors Guarantor[]
 
   @@map("users")
+}
+
+model Guarantor {
+  id Int @id @default(autoincrement())
+  userId String
+  user User @relation(fields: [userId], references: [id])
+  name String
+  surname String
+  phone String
+  email String
+  cuit String
+  addressId String?
+  address Address? @relation(fields: [addressId], references: [id])
+
+  @@index([addressId])
+  @@map("guarantors")
+  @@index([userId])
 }
 
 model UserType {
@@ -207,6 +225,7 @@ model Address {
   users          User[]
   carDealerships CarDealership[]
   automotives    Automotive[]
+  guarantors Guarantor[]
 
   @@map("addresses")
 }
