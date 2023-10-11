@@ -143,9 +143,9 @@ const PlanView = ({ plan }: Props) => {
               {Object.entries(
                 plan.carModel.carAttributes as Prisma.JsonObject
               ).map(([tableName, attributes]) => (
-                <div className="col-auto w-full md:w-max" key={tableName}>
+                <div className="col-auto w-full md:w-full" key={tableName}>
                   <span className="font-bold">{tableName}</span>
-                  <table className="mt-2 table-auto rounded border-2 border-solid border-[#ededed] text-[14px]">
+                  <table className="mx-auto mt-2 table-auto rounded border-2 border-solid border-[#ededed] text-[14px]">
                     <tbody>
                       {attributes &&
                         Object.entries(attributes)?.map(
