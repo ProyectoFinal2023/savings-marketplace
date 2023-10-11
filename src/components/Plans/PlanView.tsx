@@ -7,9 +7,11 @@ import { Fieldset } from "primereact/fieldset";
 import { Divider } from "primereact/divider";
 import { Button } from "primereact/button";
 
-import { PlanDetail } from "~/types/plans";
+import type { PlanDetail } from "~/types/plans";
 import CarPhoto from "~/components/Cars/CarPhoto";
 import { DefaultCar } from "public";
+import Image from "next/image";
+import { useRouter } from "next/router";
 
 type Props = {
   plan: PlanDetail;
@@ -20,6 +22,8 @@ const PlanView = ({ plan }: Props) => {
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
   // const carPhotos = Array(5).fill(plan.carModel?.carPhotos[0]);
+  const { push } = useRouter();
+
 
   const responsiveOptions = [
     {
@@ -49,7 +53,7 @@ const PlanView = ({ plan }: Props) => {
 
   const thumbnailTemplate = (item: CarPhotoModel) => {
     return (
-      <img
+      <Image
         src={item.url}
         alt={item.epigraph ?? ""}
         width={72}
@@ -67,7 +71,8 @@ const PlanView = ({ plan }: Props) => {
   );
 
   function handleClickPlan(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("Click submit burtton");
+    event.preventDefault();
+    void push(`/plans/add/${plan.id}`);
   }
 
   const currencyFormat = (cash: number) =>
