@@ -20,8 +20,6 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
     form: { register },
   } = usePlansList(search);
 
-  const [pageLoading, setPageLoading] = useState(false);
-
   return (
     <article className="mx-auto h-full w-10/12">
       <header className="flex gap-4 py-5">
