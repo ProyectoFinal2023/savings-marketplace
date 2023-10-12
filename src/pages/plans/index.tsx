@@ -28,7 +28,7 @@ export const getServerSideProps: GetServerSideProps<{
   const title = query.title || "";
   if (typeof title !== "string") throw new Error();
   const page = Number(query.page) || 1;
-  const size = Number(query.size) || 3;
+  const size = Number(query.size) || 6;
 
   const ssg = generateSSGHelper();
   const search = { title, page, size };

@@ -21,6 +21,25 @@ export const usePlansList = (search: SearchParams) => {
   const { push } = useRouter();
   const [pageLoading, setPageLoading] = useState(false);
 
+  const imageTemplate = (plan: PlanList[0]) => (
+    <Image
+      src={plan?.carModel?.carPhotos[0]?.url || DefaultCar}
+      alt={`Image of ${plan.carModel.description}`}
+      width={64}
+      height={64}
+      className=" rounded-md"
+    />
+  );
+
+  const monthlyPaymentTemplate = (plan: PlanList[0]) => {
+    const dollarString = Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "ARS",
+      minimumFractionDigits: 0,
+    });
+    return <span className="">{dollarString.format(plan.movingValue)}</span>;
+  };
+
   const dropdownOptions: DropdownOptionT[] = [
     {
       text: "Vista Previa",
@@ -57,7 +76,44 @@ export const usePlansList = (search: SearchParams) => {
     },
     {
       text: "Vista de Lista",
-      renderPlans: (plans) => <div></div>,
+      renderPlans: (plans) => (
+        // plans[0]?.carModel.description
+        <DataTable
+          stripedRows
+          value={plans}
+          removableSort
+          rowClassName={() =>
+            "cursor-pointer hover:!bg-dark/10 !transition-all !duration-200"
+          }
+          isDataSelectable={() => true}
+          onRowClick={(row) => {
+            console.log(row);
+            const plan = row.data as PlanList[0];
+            void push(routePaths.planDetail({ id: plan.id }));
+          }}
+          tableStyle={{ minWidth: "60rem", width: "100%" }}
+          className="w-full"
+        >
+          <Column field="title" header="Titulo" sortable></Column>
+          <Column
+            field="carModel.description"
+            header="Modelo"
+            sortable
+          ></Column>
+          <Column header="Image" body={imageTemplate} sortable></Column>
+          <Column
+            header="Cuota Mensual"
+            body={monthlyPaymentTemplate}
+            sortable
+          ></Column>
+          <Column
+            field="plan_total_months"
+            header="Meses Totales"
+            sortable
+          ></Column>
+          {/* <Column header="Status" body={statusBodyTemplate}></Column> */}
+        </DataTable>
+      ),
     },
   ];
   const [planView, setPlanView] = useState<DropdownOptionT>(
