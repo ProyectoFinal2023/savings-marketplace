@@ -67,24 +67,28 @@ const PlanView = ({ plan }: Props) => {
   );
 
   function handleClickPlan(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log('Click submit burtton');
+    console.log("Click submit burtton");
   }
 
-  const currencyFormat = (cash: number) => (
-    String(new Intl.NumberFormat('en-AR', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(cash)).split('').slice(0, -3).join('')
-  )
+  const currencyFormat = (cash: number) =>
+    String(
+      new Intl.NumberFormat("en-AR", {
+        style: "currency",
+        currency: "USD",
+      }).format(cash)
+    )
+      .split("")
+      .slice(0, -3)
+      .join("");
 
-  console.log('asda', plan.carModel);
+  console.log("asda", plan.carModel);
 
   return (
     <Card
       pt={{
         body: { className: "shadow" },
       }}
-    // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
+      // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
     >
       <div className="grid grid-cols-2 justify-center gap-4">
         <div className="p-d-flex p-jc-center p-mt-5">
@@ -105,10 +109,12 @@ const PlanView = ({ plan }: Props) => {
               {plan.carModel.description}
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
-            <div className="text-black row">
-              <p className="text-3xl">{currencyFormat(plan.movingValue)}
+            <div className="row text-black">
+              <p className="text-3xl">{currencyFormat(plan.movingValue)}</p>
+              <p className="mt-2">
+                {plan.plan_total_months} cuotas de{" "}
+                {currencyFormat(plan.movingValue / plan.plan_total_months)}
               </p>
-              <p className="mt-2">{plan.plan_total_months} cuotas de {currencyFormat(plan.movingValue / plan.plan_total_months)}</p>
             </div>
             <Button
               severity="info"
@@ -128,21 +134,35 @@ const PlanView = ({ plan }: Props) => {
       {plan.carModel.carAttributes && (
         <section id="vehicle-carachteristics" className="contents">
           <div className="block">
-            <div className="col-start-1 col-span-12 mb-2">
-              <span className="text-md md:text-2xl">Características del vehículo</span>
+            <div className="col-span-12 col-start-1 mb-2">
+              <span className="text-md md:text-2xl">
+                Características del vehículo
+              </span>
             </div>
-            <div className="grid gap-8 grid-cols-1 md:grid-cols-2">
-              {Object.entries(plan.carModel.carAttributes as Prisma.JsonObject).map(([tableName, attributes]) => (
-                <div className="col-auto w-full md:w-max" key={tableName}>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+              {Object.entries(
+                plan.carModel.carAttributes as Prisma.JsonObject
+              ).map(([tableName, attributes]) => (
+                <div className="col-auto w-full md:w-full" key={tableName}>
                   <span className="font-bold">{tableName}</span>
-                  <table className="table-auto rounded border-2 border-solid border-[#ededed] text-[14px] mt-2">
+                  <table className="mx-auto mt-2 table-auto rounded border-2 border-solid border-[#ededed] text-[14px]">
                     <tbody>
-                      {attributes && Object.entries(attributes)?.map(([attrName, attr], index) => (
-                        <tr className={index % 2 !== 0 ? "bg-[#0000000a]" : "bg-[#fff]"} key={attrName}>
-                          <th className="px-6 py-4 text-left">{attrName}</th>
-                          <td className="px-6 py-4 text-left">{attr}</td>
-                        </tr>
-                      ))}
+                      {attributes &&
+                        Object.entries(attributes)?.map(
+                          ([attrName, attr], index) => (
+                            <tr
+                              className={
+                                index % 2 !== 0 ? "bg-[#0000000a]" : "bg-[#fff]"
+                              }
+                              key={attrName}
+                            >
+                              <th className="px-6 py-4 text-left">
+                                {attrName}
+                              </th>
+                              <td className="px-6 py-4 text-left">{attr}</td>
+                            </tr>
+                          )
+                        )}
                     </tbody>
                   </table>
                 </div>
