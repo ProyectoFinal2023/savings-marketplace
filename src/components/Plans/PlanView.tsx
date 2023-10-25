@@ -10,6 +10,7 @@ import { Button } from "primereact/button";
 import { PlanDetail } from "~/types/plans";
 import CarPhoto from "~/components/Cars/CarPhoto";
 import { DefaultCar } from "public";
+import Image from "next/image";
 
 type Props = {
   plan: PlanDetail;
@@ -49,7 +50,7 @@ const PlanView = ({ plan }: Props) => {
 
   const thumbnailTemplate = (item: CarPhotoModel) => {
     return (
-      <img
+      <Image
         src={item.url}
         alt={item.epigraph ?? ""}
         width={72}
