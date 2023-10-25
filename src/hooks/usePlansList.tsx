@@ -81,7 +81,7 @@ export const usePlansList = (search: SearchParams) => {
         <DataTable
           stripedRows
           value={plans}
-          removableSort
+          // removableSort
           rowClassName={() =>
             "cursor-pointer hover:!bg-dark/10 !transition-all !duration-200"
           }
@@ -100,12 +100,8 @@ export const usePlansList = (search: SearchParams) => {
             header="Modelo"
             sortable
           ></Column>
-          <Column header="Image" body={imageTemplate} sortable></Column>
-          <Column
-            header="Cuota Mensual"
-            body={monthlyPaymentTemplate}
-            sortable
-          ></Column>
+          <Column header="Image" body={imageTemplate}></Column>
+          <Column header="Cuota Mensual" body={monthlyPaymentTemplate}></Column>
           <Column
             field="plan_total_months"
             header="Meses Totales"
