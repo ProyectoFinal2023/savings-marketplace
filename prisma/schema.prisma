@@ -15,36 +15,36 @@ model User {
   userTypeId        String
   userType          UserType            @relation(fields: [userTypeId], references: [id])
   birthdate         DateTime?
-  clerkId String?
-  phone String?
-  email String?
-  name String?
-  surname String?
+  clerkId           String?
+  phone             String?
+  email             String?
+  name              String?
+  surname           String?
   cuit              String?             @db.VarChar(11)
   tutorialDone      Boolean             @default(false)
   tutorialStep      Int                 @default(1)
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
-  guarantors Guarantor[]
+  guarantors        Guarantor[]
 
   @@map("users")
 }
 
 model Guarantor {
-  id Int @id @default(autoincrement())
-  userId String
-  user User @relation(fields: [userId], references: [id])
-  name String
-  surname String
-  phone String
-  email String
-  cuit String
+  id        Int      @id @default(autoincrement())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  name      String
+  surname   String
+  phone     String
+  email     String
+  cuit      String
   addressId String?
-  address Address? @relation(fields: [addressId], references: [id])
+  address   Address? @relation(fields: [addressId], references: [id])
 
   @@index([addressId])
-  @@map("guarantors")
   @@index([userId])
+  @@map("guarantors")
 }
 
 model UserType {
@@ -83,6 +83,7 @@ model SavingsPlan {
   endDate           DateTime
   carModelId        String
   movingValue       Int
+  movingValueUSD    Int                 @default(300)
   status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
   usersInPlan       UserInSavingsPlan[]
   portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
@@ -148,12 +149,12 @@ model Car {
 }
 
 model CarModel {
-  id           String        @id @default(cuid())
-  description  String        @unique(map: "car_model_description_unique")
-  amountDoors  Int           @default(4)
-  carPhotos    CarPhoto[]
-  savingsPlans SavingsPlan[]
-  cars         Car[]
+  id            String        @id @default(cuid())
+  description   String        @unique(map: "car_model_description_unique")
+  amountDoors   Int           @default(4)
+  carPhotos     CarPhoto[]
+  savingsPlans  SavingsPlan[]
+  cars          Car[]
   carAttributes Json?
 
   @@map("car_models")
@@ -225,7 +226,7 @@ model Address {
   users          User[]
   carDealerships CarDealership[]
   automotives    Automotive[]
-  guarantors Guarantor[]
+  guarantors     Guarantor[]
 
   @@map("addresses")
 }
