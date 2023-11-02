@@ -7,7 +7,8 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z.string().url(),
+    WAREHOUSE_URL: z.string().url(),
+    DATABASE_URL: z.string().url().nullable(),
     NODE_ENV: z.enum(["development", "test", "production"]),
     CLERK_SECRET_KEY: z.string().min(1),
   },
@@ -32,6 +33,7 @@ export const env = createEnv({
    */
   runtimeEnv: {
     DATABASE_URL: process.env.DATABASE_URL,
+    WAREHOUSE_URL: process.env.WAREHOUSE_URL?.replace(/\/+$/, '') ?? 'http://localhost:51000',
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
     CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,

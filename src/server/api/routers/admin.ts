@@ -5,23 +5,33 @@ import { env } from "~/env.mjs";
 
 // "https://getdebtbcratest.free.beeceptor.com/get_debt/20112997505";
 
-const WarehouseValidator = z.object({
-  data:	z.any(),
-  contactar:	z.string(),
-  estado:	z.string(),
-  riesgo:	z.string(),
-  CUIT:	z.number(),
-  cuotas_impagas:	z.number(),
-  dev:	z.number(),
+const CustomerValidator = z.object({
+  data: z.string(),
+  contactar: z.string(),
+  estado: z.string(),
+  riesgo: z.string(),
+  CUIT: z.number(),
+  cuotas_impagas: z.number(),
+  dev: z.number(),
 });
 
-export type Warehouse = z.infer<typeof WarehouseValidator>;
+export type DebtDetail = {
+  'Denominacion del deudor': string,
+  Entidad: string,
+  Periodo: string,
+  Situacion: string,
+  Monto: string,
+  'Dias de atraso': string,
+  Observaciones: string,
+}
 
-const responseValidator = z.array(WarehouseValidator);
+export type Customer = Omit<z.infer<typeof CustomerValidator>, 'data'> & {
+  data: DebtDetail
+}[];
 
 export const adminRouter = createTRPCRouter({
   getByCuit: publicProcedure
-    .input(z.object({ cuit: z.number() }))
+    .input(z.object({ cuit: z.string() }))
     .query(async ({ input: { cuit } }) => {
       const response = await fetch(`${env.WAREHOUSE_URL}/get_debt/${cuit}`);
       // perhaps some error handling
@@ -30,8 +40,7 @@ export const adminRouter = createTRPCRouter({
       }
 
       // should prob validate the shape with Zod
-      // const validated = responseValidator.parse(response.json());
-      const validated = response.json();
-      return validated;
+      const validated = CustomerValidator.parse(await response.json());
+      return validated.dev ? { ...validated, data: (JSON.parse(validated.data) as Array<DebtDetail>), hasDebt: true } : { ...validated, data: [], hasDebt: false, cuotas_impagas: 0 };
     }),
 });
