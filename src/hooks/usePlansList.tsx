@@ -42,6 +42,19 @@ export const usePlansList = (search: SearchParams) => {
     return <span className="">{dollarString.format(plan.movingValue)}</span>;
   };
 
+  const monthlyPaymentTemplateUSD = (plan: PlanList[0]) => {
+    const dollarString = Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      minimumFractionDigits: 0,
+    });
+    return (
+      <span className="">{`USD ${dollarString.format(
+        plan.movingValueUSD
+      )}`}</span>
+    );
+  };
+
   const dropdownOptions: DropdownOptionT[] = [
     {
       text: "Vista Previa",
@@ -104,6 +117,7 @@ export const usePlansList = (search: SearchParams) => {
           ></Column>
           <Column header="Image" body={imageTemplate}></Column>
           <Column header="Cuota Mensual" body={monthlyPaymentTemplate}></Column>
+          <Column header="En dólares" body={monthlyPaymentTemplateUSD}></Column>
           <Column
             field="plan_total_months"
             header="Meses Totales"
