@@ -26,6 +26,7 @@ export type DebtDetail = {
 }
 
 export type Customer = Omit<z.infer<typeof CustomerValidator>, 'data'> & {
+  hasDebt: boolean,
   data: DebtDetail
 }[];
 
