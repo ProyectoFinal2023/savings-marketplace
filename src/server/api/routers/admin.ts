@@ -2,6 +2,7 @@ import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { z } from "zod";
 import { TRPCError } from "@trpc/server";
 import { env } from "~/env.mjs";
+import { isAdminMiddleware } from "../middleware/isAdminMiddleware";
 
 // "https://getdebtbcratest.free.beeceptor.com/get_debt/20112997505";
 
@@ -32,8 +33,10 @@ export type Customer = Omit<z.infer<typeof CustomerValidator>, 'data'> & {
 
 export const adminRouter = createTRPCRouter({
   getByCuit: publicProcedure
+    .use(isAdminMiddleware)
     .input(z.object({ cuit: z.string() }))
-    .query(async ({ input: { cuit } }) => {
+    .query(async ({ ctx, input: { cuit } }) => {
+      console.log('user', ctx.auth);
       const response = await fetch(`${env.WAREHOUSE_URL}/get_debt/${cuit}`);
       // perhaps some error handling
       if (!response.ok) {
