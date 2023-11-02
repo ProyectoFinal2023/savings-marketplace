@@ -17,6 +17,7 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
     onSubmit,
     onPageChange,
     dropdownOptions,
+    carModels,
     form: { register },
   } = usePlansList(search);
 
@@ -26,7 +27,7 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
         <form onSubmit={onSubmit}>
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
-            <InputText placeholder="Search" {...register("title")} />
+            <InputText placeholder="Buscar" {...register("title")} />
           </span>
         </form>
         <Dropdown

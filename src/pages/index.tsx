@@ -29,6 +29,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       props: {},
     };
   }
+  if (user?.userType.description == "Admin") {
+    return {
+      redirect: {
+        destination: "/admin",
+        permanent: false,
+      },
+    };
+  }
   return {
     props: {},
     redirect: {
@@ -39,4 +47,3 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default Home;
-
