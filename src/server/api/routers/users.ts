@@ -9,7 +9,11 @@ export const usersRouter = createTRPCRouter({
       const { clerkId } = input;
       return ctx.prisma.user.findFirst({
         where: { clerkId },
-        include: { address: true, guarantors: { include: { address: true } } },
+        include: {
+          address: true,
+          guarantors: { include: { address: true } },
+          userType: true,
+        },
       });
     }),
   upsertUser: publicProcedure

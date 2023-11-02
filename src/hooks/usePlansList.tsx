@@ -4,13 +4,14 @@ import { useRouter } from "next/router";
 import { Card } from "primereact/card";
 import { type PaginatorPageChangeEvent } from "primereact/paginator";
 import { DefaultCar } from "public";
-import React, { PropsWithChildren, useState } from "react";
+import React, { useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 import { z } from "zod";
 import { type SearchParams, type PlanList } from "~/types/plans";
 import { routePaths } from "~/utils/routes";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { api } from "~/utils/api";
 
 export type DropdownOptionT = {
   text: string;
@@ -20,6 +21,7 @@ export type DropdownOptionT = {
 export const usePlansList = (search: SearchParams) => {
   const { push } = useRouter();
   const [pageLoading, setPageLoading] = useState(false);
+  const { data: carModels } = api.carModels.getAll.useQuery();
 
   const imageTemplate = (plan: PlanList[0]) => (
     <Image
@@ -165,5 +167,6 @@ export const usePlansList = (search: SearchParams) => {
     onPageChange,
     planView,
     setPlanView,
+    carModels,
   };
 };
