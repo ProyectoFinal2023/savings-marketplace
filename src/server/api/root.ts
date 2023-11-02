@@ -3,6 +3,7 @@ import { carsRouter } from "./routers/cars";
 import { carModelsRouter } from "./routers/carModels";
 import { savingsPlansRouter } from "./routers/savingsPlans";
 import { usersRouter } from "./routers/users";
+import { adminRouter } from "./routers/admin";
 
 /**
  * This is the primary router for your server.
@@ -10,6 +11,7 @@ import { usersRouter } from "./routers/users";
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  admin: adminRouter,
   cars: carsRouter,
   carModels: carModelsRouter,
   savingsPlans: savingsPlansRouter,
