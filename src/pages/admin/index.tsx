@@ -1,16 +1,17 @@
-import { type GetServerSideProps, type NextPage } from "next";
-import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { getAuth } from "@clerk/nextjs/server";
-
-// components/DebtorsList.tsx
-import React from "react";
-import { Layout } from "~/components/Layout/Layout";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import {
+  type InferGetServerSidePropsType,
+  type GetServerSideProps,
+  type NextPage,
+} from "next";
+import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "primereact/button";
-import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Layout } from "~/components/Layout/Layout";
+import { type DebtDetail } from "~/server/api/routers/admin";
 
 type Debtor = {
   "Denominacion del deudor": string;
@@ -27,44 +28,18 @@ const schema = z.object({
 });
 type SearchT = z.infer<typeof schema>;
 
-const AdminPage: NextPage = () => {
+const AdminPage: NextPage<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ debtor }) => {
   const { register } = useForm<SearchT>({
     resolver: zodResolver(schema),
+    defaultValues: {
+      cuit: debtor?.CUIT ? String(debtor?.CUIT) : "",
+    },
     mode: "onSubmit",
   });
 
-  const { data, isLoading, isError } = {
-    data: {
-      data: [
-        {
-          "Denominacion del deudor": "FRANCELLA GUILLERMO HECTOR",
-          Entidad: "BANCO SANTANDER ARGENTINA S.A.",
-          Periodo: "08/23",
-          Situacion: "1",
-          Monto: "1624",
-          "Dias de atraso": "N/A",
-          Observaciones: "-",
-        },
-      ],
-      contactar: "NO",
-      estado: "En situación normal",
-      riesgo: "Situación normal",
-      CUIT: 20112997505,
-      dev: 0,
-    },
-    isLoading: false,
-    isError: false,
-  };
-
-  if (isLoading) {
-    return <div>Cargando...</div>;
-  }
-
-  if (isError || !data) {
-    return <div>{"No se pudo mostrar los datos del deudor."}</div>;
-  }
-
-  const debtorData = data.data as Debtor[];
+  const debtorData = debtor?.data as Debtor[] | null;
   const onSubmit = () => {
     return null;
   };
@@ -72,7 +47,10 @@ const AdminPage: NextPage = () => {
   return (
     <Layout classname="px-12">
       <div className="flex flex-col p-4">
-        <form onSubmit={onSubmit} className="mb-4 flex gap-4">
+        <div className="mb-4">
+          <h1 className=" text-4xl font-black">Búsqueda de Deudores</h1>
+        </div>
+        <form onSubmit={onSubmit} className="mb-8 flex gap-4">
           <span className="p-input-icon-left">
             <i className="pi pi-search" />
             <InputText placeholder="Buscar" {...register("cuit")} />
@@ -81,6 +59,15 @@ const AdminPage: NextPage = () => {
             Buscar
           </Button>
         </form>
+        {debtor && (
+          <div className="my-3 rounded-md bg-blue-200 p-4">
+            <div>Cuotas impagas:{debtor?.cuotas_impagas}</div>
+            <div>Contactar? {debtor?.contactar}</div>
+            <div>Estado: {debtor?.estado}</div>
+            <div>Riesgo: {debtor?.riesgo}</div>
+          </div>
+        )}
+
         <div className="overflow-x-auto">
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
@@ -132,7 +119,7 @@ const AdminPage: NextPage = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {debtorData.map((debtor, index) => (
+                  {debtorData?.map((debtor, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
                         {debtor["Denominacion del deudor"]}
@@ -168,7 +155,18 @@ const AdminPage: NextPage = () => {
 };
 export default AdminPage;
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<{
+  debtor: {
+    data: DebtDetail[];
+    hasDebt: boolean;
+    contactar: string;
+    estado: string;
+    riesgo: string;
+    CUIT: number;
+    cuotas_impagas?: number | null;
+    dev: number;
+  } | null;
+}> = async (ctx) => {
   const clerkUser = getAuth(ctx.req);
   if (!clerkUser.userId) throw Error("Not authorized.");
   const ssg = generateSSGHelper();
@@ -183,6 +181,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
+  const cuit = ctx.query.cuit;
+  console.log(cuit);
+  let debtor = null;
+  if (cuit) {
+    debtor = await ssg.admin.getByCuit.fetch({ cuit: cuit as string });
+  }
 
-  return { props: {} };
+  return { props: { debtor } };
 };
