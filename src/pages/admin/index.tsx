@@ -1,27 +1,22 @@
 import { getAuth } from "@clerk/nextjs/server";
+import { zodResolver } from "@hookform/resolvers/zod";
+import clsx from "clsx";
 import {
-  type InferGetServerSidePropsType,
   type GetServerSideProps,
+  type InferGetServerSidePropsType,
   type NextPage,
 } from "next";
-import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
-import { zodResolver } from "@hookform/resolvers/zod";
+import Image from "next/image";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
+import { DefaultUser } from "public";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Layout } from "~/components/Layout/Layout";
-import { type DebtDetail } from "~/server/api/routers/admin";
+import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
+import { type RouterOutputs } from "~/utils/api";
 
-type Debtor = {
-  "Denominacion del deudor": string;
-  Entidad: string;
-  Periodo: string;
-  Situacion: string;
-  Monto: string;
-  "Dias de atraso": string;
-  Observaciones: string;
-};
+type Debtor = RouterOutputs["admin"]["getByCuit"];
 
 const schema = z.object({
   cuit: z.string().min(1).default(""),
@@ -34,12 +29,12 @@ const AdminPage: NextPage<
   const { register } = useForm<SearchT>({
     resolver: zodResolver(schema),
     defaultValues: {
-      cuit: debtor?.CUIT ? String(debtor?.CUIT) : "",
+      cuit: debtor?.cuit ? String(debtor?.cuit) : "",
     },
     mode: "onSubmit",
   });
 
-  const debtorData = debtor?.data as Debtor[] | null;
+  const debtorData = debtor?.data;
   const onSubmit = () => {
     return null;
   };
@@ -60,11 +55,41 @@ const AdminPage: NextPage<
           </Button>
         </form>
         {debtor && (
-          <div className="my-3 rounded-md bg-blue-200 p-4">
-            <div>Cuotas impagas:{debtor?.cuotas_impagas}</div>
-            <div>Contactar? {debtor?.contactar}</div>
-            <div>Estado: {debtor?.estado}</div>
-            <div>Riesgo: {debtor?.riesgo}</div>
+          <div className="my-3 flex h-48 w-fit min-w-[50rem] items-center gap-8 rounded-md bg-dark p-4">
+            <div>
+              <Image
+                src={DefaultUser}
+                width={128}
+                height={128}
+                alt={`Foto de perfil de ${debtor.nombre}`}
+              />
+            </div>
+            <div className=" flex h-full flex-col flex-wrap justify-center ">
+              {[
+                { key: "Nombre: ", value: debtor.nombre },
+                { key: "Estado: ", value: debtor.estado },
+                { key: "Riesgo: ", value: debtor.riesgo },
+                { key: "Cuotas impagas: ", value: debtor.cuotas_impagas },
+                {
+                  key: "Contactar? ",
+                  value: debtor.contactar,
+                  className:
+                    debtor.contactar === "NO"
+                      ? "text-red-400"
+                      : "text-green-400",
+                },
+              ].map((data) => (
+                <div
+                  key={data.key}
+                  className="flex shrink-0 basis-1/3 items-center gap-2 px-4 text-white"
+                >
+                  <span className="font-bold">{data.key}</span>
+                  <span className={clsx(data.className, "font-bold")}>
+                    {data.value}
+                  </span>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -72,75 +97,42 @@ const AdminPage: NextPage<
           <div className="inline-block min-w-full align-middle">
             <div className="overflow-hidden border-b border-gray-200 shadow sm:rounded-lg">
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-dark">
                   <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Deudor
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Entidad
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Periodo
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Situación
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Monto
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Días de atraso
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500"
-                    >
-                      Observaciones
-                    </th>
+                    {[
+                      "Entidad",
+                      "Período",
+                      "Situación",
+                      "Monto",
+                      "Días de atraso",
+                    ].map((columna) => (
+                      <th
+                        key={columna}
+                        scope="col"
+                        className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-white"
+                      >
+                        {columna}
+                      </th>
+                    ))}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {debtorData?.map((debtor, index) => (
                     <tr key={index}>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">
-                        {debtor["Denominacion del deudor"]}
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                        {debtor.entidad}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {debtor.Entidad}
+                        {debtor.periodo}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {debtor.Periodo}
+                        {debtor.situacion}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {debtor.Situacion}
+                        {debtor.monto}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {debtor.Monto}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {debtor["Dias de atraso"]}
-                      </td>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {debtor.Observaciones}
+                        {debtor.dias_atraso}
                       </td>
                     </tr>
                   ))}
@@ -156,16 +148,7 @@ const AdminPage: NextPage<
 export default AdminPage;
 
 export const getServerSideProps: GetServerSideProps<{
-  debtor: {
-    data: DebtDetail[];
-    hasDebt: boolean;
-    contactar: string;
-    estado: string;
-    riesgo: string;
-    CUIT: number;
-    cuotas_impagas?: number | null;
-    dev: number;
-  } | null;
+  debtor: Debtor | null;
 }> = async (ctx) => {
   const clerkUser = getAuth(ctx.req);
   if (!clerkUser.userId) throw Error("Not authorized.");
@@ -182,7 +165,6 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
   const cuit = ctx.query.cuit;
-  console.log(cuit);
   let debtor = null;
   if (cuit) {
     debtor = await ssg.admin.getByCuit.fetch({ cuit: cuit as string });

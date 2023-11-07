@@ -3,12 +3,10 @@ import { clsx } from "clsx";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { Button } from "primereact/button";
 import { Autosavings } from "public";
-import { routesPaths } from "~/routesPaths";
-import { InputText } from "primereact/inputtext";
-import { routePaths } from "~/utils/routes";
-import { useState } from "react";
 import { env } from "~/env.mjs";
+import { routesPaths } from "~/routesPaths";
 
 type NavbarProps = {
   className?: string;
@@ -26,7 +24,17 @@ export const Navbar = ({ className }: NavbarProps) => {
           </Link>
         </li>
         <li className="ml-auto shrink-0">
-          <UserButton afterSignOutUrl={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL} />
+          <ul className="flex items-center gap-4">
+            <li>
+              <Button>Comprar un plan</Button>
+            </li>
+            <li>
+              <Button severity="info">Vender un plan</Button>
+            </li>
+            <li>
+              <UserButton afterSignOutUrl={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL} />
+            </li>
+          </ul>
         </li>
       </ul>
     </nav>

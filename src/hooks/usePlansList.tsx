@@ -102,7 +102,6 @@ export const usePlansList = (search: SearchParams) => {
           }
           isDataSelectable={() => true}
           onRowClick={(row) => {
-            console.log(row);
             const plan = row.data as PlanList[0];
             void push(routePaths.planDetail({ id: plan.id }));
           }}

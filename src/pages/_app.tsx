@@ -22,6 +22,10 @@ const MyApp: AppType = ({ Component, pageProps }) => {
             content="Conseguí el mejor plan de ahorro al mejor precio"
           />
           <link rel="icon" href="/favicon.ico" />
+          <script
+            src="//code.tidio.co/xlfkv63fdz5sgca17qbog4wyjoxb8hey.js"
+            async
+          ></script>
         </Head>
         <ToastContainer />
         <LoadingProvider>

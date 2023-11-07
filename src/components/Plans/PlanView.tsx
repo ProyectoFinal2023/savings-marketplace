@@ -82,8 +82,6 @@ const PlanView = ({ plan }: Props) => {
       .slice(0, -3)
       .join("");
 
-  console.log("asda", plan.carModel);
-
   return (
     <Card
       pt={{

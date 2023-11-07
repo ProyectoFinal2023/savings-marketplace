@@ -8,38 +8,29 @@ import { env } from "~/env.mjs";
 const CustomerValidator = z.object({
   data: z.array(
     z.object({
-      "Denominacion del deudor": z.string(),
-      Entidad: z.string(),
-      Periodo: z.string(),
-      Situacion: z.string(),
-      Monto: z.string(),
-      "Dias de atraso": z.string(),
-      Observaciones: z.string(),
+      entidad: z.string(),
+      periodo: z.string(),
+      situacion: z.string(),
+      monto: z.number(),
+      dias_atraso: z.number(),
     })
   ),
+  nombre: z.string(),
+  cuit: z.string(),
   contactar: z.string(),
   estado: z.string(),
   riesgo: z.string(),
-  CUIT: z.number(),
   cuotas_impagas: z.number().nullish(),
-  dev: z.number(),
+  usuario_registrado: z.number(),
 });
 
 export type DebtDetail = {
-  "Denominacion del deudor": string;
-  Entidad: string;
-  Periodo: string;
-  Situacion: string;
-  Monto: string;
-  "Dias de atraso": string;
-  Observaciones: string;
+  entidad: string;
+  periodo: string;
+  situacion: string;
+  monto: string;
+  dias_atraso: string;
 };
-
-export type Customer = Omit<z.infer<typeof CustomerValidator>, "data"> &
-  {
-    hasDebt: boolean;
-    data: DebtDetail;
-  }[];
 
 export const adminRouter = createTRPCRouter({
   getByCuit: publicProcedure
@@ -47,6 +38,8 @@ export const adminRouter = createTRPCRouter({
     .query(async ({ input: { cuit } }) => {
       // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
       const response = await fetch(`${env.WAREHOUSE_URL}/get_debt/${cuit}`);
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      const body = await response.json();
       // perhaps some error handling
       if (!response.ok) {
         throw new TRPCError({
@@ -56,12 +49,10 @@ export const adminRouter = createTRPCRouter({
       }
 
       // should prob validate the shape with Zod
-      const validated = CustomerValidator.parse(await response.json());
-      return validated.dev
-        ? {
-            ...validated,
-            hasDebt: true,
-          }
-        : { ...validated, data: [], hasDebt: false, cuotas_impagas: 0 };
+      const validated = CustomerValidator.parse(body);
+      return {
+        ...validated,
+        hasDebt: !!validated.data.length,
+      };
     }),
 });
