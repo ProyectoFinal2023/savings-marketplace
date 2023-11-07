@@ -29,7 +29,9 @@ export const Navbar = ({ className }: NavbarProps) => {
               <Button>Comprar un plan</Button>
             </li>
             <li>
-              <Button severity="info">Vender un plan</Button>
+              <Button severity="info" onClick={() => void push("/sell-plan")}>
+                Vender un plan
+              </Button>
             </li>
             <li>
               <UserButton afterSignOutUrl={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL} />
