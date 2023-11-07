@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import type { CarPhoto as CarPhotoModel, Prisma } from "@prisma/client";
 
 import { Card } from "primereact/card";
@@ -6,11 +6,13 @@ import { Galleria } from "primereact/galleria";
 import { Fieldset } from "primereact/fieldset";
 import { Divider } from "primereact/divider";
 import { Button } from "primereact/button";
+import { Dialog } from 'primereact/dialog';
 
 import { PlanDetail } from "~/types/plans";
 import CarPhoto from "~/components/Cars/CarPhoto";
 import { DefaultCar } from "public";
 import Image from "next/image";
+import AddPlanModal from "./AddPlanModal";
 
 type Props = {
   plan: PlanDetail;
@@ -21,6 +23,30 @@ const PlanView = ({ plan }: Props) => {
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
   // const carPhotos = Array(5).fill(plan.carModel?.carPhotos[0]);
+  const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  function toggleModal() {
+    setVisible(!visible);
+  }
+
+  async function handleAccept(evt: React.MouseEvent<HTMLButtonElement>) {
+    setLoading(true);
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    toggleModal();
+  }
+
+  function handleReject() {
+    toggleModal();
+  }
+
+  const footerContent = (
+    <div>
+      <Button label="No" icon="pi pi-times" onClick={handleReject} className="p-button-text" />
+      <Button label="Sí" icon="pi pi-check" onClick={handleAccept} autoFocus disabled={loading} />
+    </div>
+  );
+
 
   const responsiveOptions = [
     {
@@ -67,8 +93,8 @@ const PlanView = ({ plan }: Props) => {
     </div>
   );
 
-  function handleClickPlan(event: React.MouseEvent<HTMLButtonElement>) {
-    console.log("Click submit burtton");
+  function handleClick() {
+    toggleModal();
   }
 
   const currencyFormat = (cash: number) =>
@@ -89,7 +115,7 @@ const PlanView = ({ plan }: Props) => {
       pt={{
         body: { className: "shadow" },
       }}
-      // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
+    // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
     >
       <div className="grid grid-cols-2 justify-center gap-4">
         <div className="p-d-flex p-jc-center p-mt-5">
@@ -122,10 +148,14 @@ const PlanView = ({ plan }: Props) => {
               size="large"
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
-              onClick={handleClickPlan}
+              onClick={handleClick}
             >
               Solicitar Plan
             </Button>
+            <Dialog visible={visible} footer={footerContent} onHide={toggleModal}>
+              <p>¿Está seguro de que quiere agregar este plan a su cartera?</p>
+              <p>Al aceptar se encuentra de acuerdo con las condiciones.</p>
+            </Dialog>
           </div>
         </div>
       </div>
