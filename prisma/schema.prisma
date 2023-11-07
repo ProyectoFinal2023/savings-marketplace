@@ -126,6 +126,7 @@ model PaymentMethod {
 
 model SavingsPlanStatus {
   id           String        @id @default(cuid())
+  name         String        @unique(map: "savings_plan_status_name_unique")
   description  String        @unique(map: "savings_plan_status_description_unique")
   savingsPlans SavingsPlan[]
 
