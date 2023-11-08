@@ -13,12 +13,15 @@ import CarPhoto from "~/components/Cars/CarPhoto";
 import { DefaultCar } from "public";
 import Image from "next/image";
 import AddPlanModal from "./AddPlanModal";
+import { api } from "~/utils/api";
+import { toast } from "react-toastify";
 
 type Props = {
   plan: PlanDetail;
 };
 
 const PlanView = ({ plan }: Props) => {
+  console.log('plan', plan);
   const carPhotos = plan.carModel?.carPhotos?.length
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
@@ -30,10 +33,23 @@ const PlanView = ({ plan }: Props) => {
     setVisible(!visible);
   }
 
-  async function handleAccept(evt: React.MouseEvent<HTMLButtonElement>) {
+  const { mutate: setPlanToPending, isLoading } = api.savingsPlans.pendingSavingsPlan.useMutation({
+    onSuccess: () => {
+      toggleModal();
+      setLoading(false);
+      toast.success("Plan solicitado con éxito.");
+    },
+    onError: () => {
+      toggleModal();
+      setLoading(false);
+      toast.error("Hubo un error. Intente nuevamente más tarde.");
+    },
+  });
+
+  function handleAccept(evt: React.MouseEvent<HTMLButtonElement>) {
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    toggleModal();
+    console.log('id', plan.id);
+    setPlanToPending({ id: plan.id });
   }
 
   function handleReject() {
@@ -108,8 +124,6 @@ const PlanView = ({ plan }: Props) => {
       .slice(0, -3)
       .join("");
 
-  console.log("asda", plan.carModel);
-
   return (
     <Card
       pt={{
@@ -149,8 +163,9 @@ const PlanView = ({ plan }: Props) => {
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
               onClick={handleClick}
+              disabled={plan.status.name !== 'activo'}
             >
-              Solicitar Plan
+              {plan.status.name === 'pendiente' ? "Reservado" : "Solicitar Plan"}
             </Button>
             <Dialog visible={visible} footer={footerContent} onHide={toggleModal}>
               <p>¿Está seguro de que quiere agregar este plan a su cartera?</p>
@@ -200,6 +215,10 @@ const PlanView = ({ plan }: Props) => {
               ))}
             </div>
           </div>
+          <Dialog visible={visible} onHide={toggleModal}>
+            <p>Felicidades!</p>
+            <p>Su plan ha sido reservado.</p>
+          </Dialog>
         </section>
       )}
     </Card>

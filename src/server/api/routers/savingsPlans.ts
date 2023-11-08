@@ -28,6 +28,7 @@ export const savingsPlansRouter = createTRPCRouter({
           },
           status: {
             select: {
+              name: true,
               description: true,
             },
           },
@@ -93,7 +94,7 @@ export const savingsPlansRouter = createTRPCRouter({
             id,
           },
           data: {
-            statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "Pending" } })).id
+            statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "pendiente" } })).id
           },
         });
 
