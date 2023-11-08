@@ -26,8 +26,8 @@ const PlanView = ({ plan }: Props) => {
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
   // const carPhotos = Array(5).fill(plan.carModel?.carPhotos[0]);
+  const [successVisible, setSuccessVisible] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   function toggleModal() {
     setVisible(!visible);
@@ -36,19 +36,16 @@ const PlanView = ({ plan }: Props) => {
   const { mutate: setPlanToPending, isLoading } = api.savingsPlans.pendingSavingsPlan.useMutation({
     onSuccess: () => {
       toggleModal();
-      setLoading(false);
       toast.success("Plan solicitado con éxito.");
+      setSuccessVisible(true);
     },
     onError: () => {
       toggleModal();
-      setLoading(false);
       toast.error("Hubo un error. Intente nuevamente más tarde.");
     },
   });
 
   function handleAccept(evt: React.MouseEvent<HTMLButtonElement>) {
-    setLoading(true);
-    console.log('id', plan.id);
     setPlanToPending({ id: plan.id });
   }
 
@@ -59,7 +56,7 @@ const PlanView = ({ plan }: Props) => {
   const footerContent = (
     <div>
       <Button label="No" icon="pi pi-times" onClick={handleReject} className="p-button-text" />
-      <Button label="Sí" icon="pi pi-check" onClick={handleAccept} autoFocus disabled={loading} />
+      <Button label="Sí" icon="pi pi-check" onClick={handleAccept} autoFocus disabled={isLoading} />
     </div>
   );
 
@@ -215,9 +212,8 @@ const PlanView = ({ plan }: Props) => {
               ))}
             </div>
           </div>
-          <Dialog visible={visible} onHide={toggleModal}>
-            <p>Felicidades!</p>
-            <p>Su plan ha sido reservado.</p>
+          <Dialog visible={successVisible} header={<p className="text-4xl">Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
+            <p>Su plan ha sido reservado con éxito. Para continuar, debe ponerse en contacto con el comprador.</p>
           </Dialog>
         </section>
       )}
