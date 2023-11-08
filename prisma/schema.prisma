@@ -74,6 +74,7 @@ model SavingsPlan {
   id                String              @id @default(cuid())
   statusId          String
   portfolioId       String
+  sellerId          String
   title             String
   description       String
   plan_months       Int
@@ -89,12 +90,24 @@ model SavingsPlan {
   portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
   paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
   carModel          CarModel            @relation(fields: [carModelId], references: [id])
+  seller            SavingsPlanSeller   @relation(fields: [sellerId], references: [id])
 
   @@index([statusId])
   @@index([paymentMethodId])
   @@index([portfolioId])
   @@index([carModelId])
+  @@index([sellerId])
   @@map("savings_plans")
+}
+
+model SavingsPlanSeller {
+  id                String              @id @default(cuid())
+  cuit              String              @unique()
+  name              String?
+  contactInfo       String?
+  savingsPlan       SavingsPlan[]
+
+  @@map("savings_plan_sellers")
 }
 
 model PaymentInvoice {
