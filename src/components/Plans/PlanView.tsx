@@ -30,6 +30,8 @@ const PlanView = ({ plan, user }: Props) => {
   // const carPhotos = Array(5).fill(plan.carModel?.carPhotos[0]);
   const [successVisible, setSuccessVisible] = useState(false);
   const [visible, setVisible] = useState(false);
+  const [planStatus, setPlanStatus] = useState(plan.status.name);
+  const [userHasPlan, setuserHasPlan] = useState(plan.usersInPlan.some((u) => u.userId == user.id));
 
   function toggleModal() {
     setVisible(!visible);
@@ -40,6 +42,8 @@ const PlanView = ({ plan, user }: Props) => {
       toggleModal();
       toast.success("Plan solicitado con éxito.");
       setSuccessVisible(true);
+      setPlanStatus('pendiente');
+      setuserHasPlan(true);
     },
     onError: () => {
       toggleModal();
@@ -109,7 +113,7 @@ const PlanView = ({ plan, user }: Props) => {
   );
 
   function handleClick() {
-    if (plan.usersInPlan.some((u) => u.userId == user.id)) {
+    if (userHasPlan) {
       setSuccessVisible(true);
     } else {
       toggleModal();
@@ -166,14 +170,35 @@ const PlanView = ({ plan, user }: Props) => {
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
               onClick={handleClick}
-              disabled={plan.status.name !== 'activo' && !plan.usersInPlan.some((u) => u.userId == user.id)}
+              disabled={planStatus !== 'activo' && !userHasPlan}
             >
-              {plan.status.name === 'pendiente' ? (plan.usersInPlan.some((u) => u.userId == user.id) ? "Mostrar contacto" : "Reservado") : "Solicitar Plan"}
+              {planStatus === 'pendiente' ? (userHasPlan ? "Mostrar contacto" : "Reservado") : "Solicitar Plan"}
             </Button>
             <Dialog visible={visible} footer={footerContent} onHide={toggleModal}>
               <p>¿Está seguro de que quiere agregar este plan a su cartera?</p>
               <p>Al aceptar se encuentra de acuerdo con las condiciones.</p>
             </Dialog>
+          <Dialog visible={successVisible} header={<p className="text-4xl">¡Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
+            <p>Su plan ha sido reservado con éxito. Para continuar, debe ponerse en contacto con el comprador.</p>
+            <div className="flex flex-col mt-3">
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>Nombre:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["name"]}</span></div>
+              </div>
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>Email de contacto:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["email"]}</span></div>
+              </div>
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>Teléfono de contacto:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["phone_number"]}</span></div>
+              </div>
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>CBU/CVU:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["bank_info"]}</span></div>
+              </div>
+            </div>
+          </Dialog>
           </div>
         </div>
       </div>
@@ -218,27 +243,6 @@ const PlanView = ({ plan, user }: Props) => {
               ))}
             </div>
           </div>
-          <Dialog visible={successVisible} header={<p className="text-4xl">¡Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
-            <p>Su plan ha sido reservado con éxito. Para continuar, debe ponerse en contacto con el comprador.</p>
-            <div className="flex flex-col mt-3">
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>Nombre:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["name"]}</span></div>
-              </div>
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>Email de contacto:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["email"]}</span></div>
-              </div>
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>Teléfono de contacto:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["phone_number"]}</span></div>
-              </div>
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>CBU/CVU:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["bank_info"]}</span></div>
-              </div>
-            </div>
-          </Dialog>
         </section>
       )}
     </Card>
