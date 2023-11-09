@@ -21,6 +21,8 @@ export const savingsPlansRouter = createTRPCRouter({
           id,
         },
         include: {
+          seller: true,
+          usersInPlan: true,
           carModel: {
             include: {
               carPhotos: true,
@@ -28,6 +30,7 @@ export const savingsPlansRouter = createTRPCRouter({
           },
           status: {
             select: {
+              name: true,
               description: true,
             },
           },
@@ -38,7 +41,7 @@ export const savingsPlansRouter = createTRPCRouter({
           },
         },
       });
-  }),
+    }),
   getSavingsPlans: publicProcedure
     .input(
       z.object({
@@ -79,4 +82,30 @@ export const savingsPlansRouter = createTRPCRouter({
 
       return { plans, total, size: input.search.size };
     }),
+  pendingSavingsPlan: publicProcedure
+    .input(z.object({
+      id: z.string(),
+    }))
+    .mutation(async ({ ctx, input: { id } }) => {
+      const user = await ctx.prisma.user.findFirstOrThrow({
+        where: { clerkId: ctx.auth.userId },
+      });
+      return ctx.prisma.$transaction(async () => {
+        await ctx.prisma.savingsPlan.update({
+          where: {
+            id,
+          },
+          data: {
+            statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "pendiente" } })).id
+          },
+        });
+
+        await ctx.prisma.userInSavingsPlan.create({
+          data: {
+            planId: id,
+            userId: user.id,
+          },
+        });
+      })
+    })
 });

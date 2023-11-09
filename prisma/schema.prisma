@@ -11,18 +11,18 @@ datasource db {
 model User {
   id                String              @id @default(cuid())
   addressId         String?             @unique
-  address           Address?            @relation(fields: [addressId], references: [id])
   userTypeId        String
-  userType          UserType            @relation(fields: [userTypeId], references: [id])
   birthdate         DateTime?
-  clerkId           String?
-  phone             String?
-  email             String?
-  name              String?
-  surname           String?
   cuit              String?             @db.VarChar(11)
   tutorialDone      Boolean             @default(false)
   tutorialStep      Int                 @default(1)
+  clerkId           String?
+  email             String?
+  name              String?
+  phone             String?
+  surname           String?
+  address           Address?            @relation(fields: [addressId], references: [id])
+  userType          UserType            @relation(fields: [userTypeId], references: [id])
   userInSavingsPlan UserInSavingsPlan[]
   cars              Car[]
   guarantors        Guarantor[]
@@ -33,13 +33,13 @@ model User {
 model Guarantor {
   id        Int      @id @default(autoincrement())
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
   name      String
   surname   String
   phone     String
   email     String
   cuit      String
   addressId String?
+  user      User     @relation(fields: [userId], references: [id])
   address   Address? @relation(fields: [addressId], references: [id])
 
   @@index([addressId])
@@ -84,17 +84,30 @@ model SavingsPlan {
   carModelId        String
   movingValue       Int
   movingValueUSD    Int                 @default(300)
+  sellerId          String
   status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
   usersInPlan       UserInSavingsPlan[]
   portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
   paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
   carModel          CarModel            @relation(fields: [carModelId], references: [id])
+  seller            SavingsPlanSeller   @relation(fields: [sellerId], references: [id])
 
   @@index([statusId])
   @@index([paymentMethodId])
   @@index([portfolioId])
   @@index([carModelId])
+  @@index([sellerId])
   @@map("savings_plans")
+}
+
+model SavingsPlanSeller {
+  id          String        @id @default(cuid())
+  cuit        String        @unique
+  name        String?
+  contactInfo String?
+  savingsPlan SavingsPlan[]
+
+  @@map("savings_plan_sellers")
 }
 
 model PaymentInvoice {
@@ -126,6 +139,7 @@ model PaymentMethod {
 
 model SavingsPlanStatus {
   id           String        @id @default(cuid())
+  name  String               @unique(map: "savings_plan_status_name_unique")
   description  String        @unique(map: "savings_plan_status_description_unique")
   savingsPlans SavingsPlan[]
 
@@ -152,10 +166,10 @@ model CarModel {
   id            String        @id @default(cuid())
   description   String        @unique(map: "car_model_description_unique")
   amountDoors   Int           @default(4)
+  carAttributes Json?
   carPhotos     CarPhoto[]
   savingsPlans  SavingsPlan[]
   cars          Car[]
-  carAttributes Json?
 
   @@map("car_models")
 }
