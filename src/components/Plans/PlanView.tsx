@@ -23,7 +23,7 @@ type Props = {
 
 const PlanView = ({ plan, user }: Props) => {
   const contactInfo: any = plan.seller.contactInfo;
-  const __contactInfo = JSON.parse(contactInfo ?? '');
+  const __contactInfo = JSON.parse((contactInfo as string) ?? '');
   const carPhotos = plan.carModel?.carPhotos?.length
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
@@ -156,8 +156,8 @@ const PlanView = ({ plan, user }: Props) => {
             <div className="row text-black">
               <p className="text-3xl">{currencyFormat(plan.movingValue)}</p>
               <p className="mt-2">
-                {plan.plan_total_months} cuotas de{" "}
-                {currencyFormat(plan.movingValue / plan.plan_total_months)}
+                Valor de {currencyFormat(plan.movingValue * plan.plan_total_months)} {" "}
+                en {plan.plan_total_months} cuotas
               </p>
             </div>
             <Button
