@@ -22,6 +22,8 @@ const CustomerValidator = z.object({
   riesgo: z.string(),
   cuotas_impagas: z.number().nullish(),
   usuario_registrado: z.number(),
+  mail: z.string().nullish(),
+  telefono: z.string().nullish(),
 });
 
 export type DebtDetail = {
@@ -47,7 +49,7 @@ export const adminRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-
+      console.log(body);
       // should prob validate the shape with Zod
       const validated = CustomerValidator.parse(body);
       return {

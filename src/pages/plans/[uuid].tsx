@@ -1,17 +1,13 @@
 import {
-  type InferGetServerSidePropsType,
   type GetServerSideProps,
+  type InferGetServerSidePropsType,
   type NextPage,
 } from "next";
-import Image from "next/image";
-import { Card } from "primereact/card";
 import { ScrollPanel } from "primereact/scrollpanel";
-import { InputText } from 'primereact/inputtext'
-import { DefaultCar } from "public";
 import { Layout } from "~/components/Layout/Layout";
+import PlanView from "~/components/Plans/PlanView";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { type PlanDetail } from "~/types/plans";
-import PlanView from "~/components/Plans/PlanView";
 
 const PlansDetail: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>

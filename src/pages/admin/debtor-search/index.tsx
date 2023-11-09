@@ -10,11 +10,13 @@ import Image from "next/image";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { DefaultUser } from "public";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Layout } from "~/components/Layout/Layout";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { type RouterOutputs } from "~/utils/api";
+import { Dialog } from "primereact/dialog";
 
 type Debtor = RouterOutputs["admin"]["getByCuit"];
 
@@ -26,6 +28,7 @@ type SearchT = z.infer<typeof schema>;
 const DebtorSearchPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ debtor }) => {
+  const [showContact, setShowContact] = useState(false);
   const { register } = useForm<SearchT>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -38,7 +41,6 @@ const DebtorSearchPage: NextPage<
   const onSubmit = () => {
     return null;
   };
-
   return (
     <Layout classname="px-12">
       <div className="flex flex-col p-4">
@@ -56,13 +58,16 @@ const DebtorSearchPage: NextPage<
         </form>
         {debtor && (
           <div className="my-3 flex h-48 w-fit min-w-[50rem] items-center gap-8 rounded-md bg-dark p-4">
-            <div>
+            <div className="flex flex-col items-center gap-2">
               <Image
                 src={DefaultUser}
                 width={128}
                 height={128}
                 alt={`Foto de perfil de ${debtor.nombre}`}
               />
+              <Button severity="info" onClick={() => setShowContact(true)}>
+                Contacto
+              </Button>
             </div>
             <div className=" flex h-full flex-col flex-wrap justify-center ">
               {[
@@ -141,6 +146,33 @@ const DebtorSearchPage: NextPage<
             </div>
           </div>
         </div>
+        <Dialog
+          visible={showContact}
+          onHide={() => setShowContact(false)}
+          header="Contacto"
+          className=" min-w-[30rem]"
+        >
+          <div className="flex flex-col gap-4">
+            <div>
+              Mail:{" "}
+              {debtor?.mail ? (
+                <a href={`mailto:${debtor.mail}`}>{debtor.mail}</a>
+              ) : (
+                <span>{"-"}</span>
+              )}
+            </div>
+            <div className="w-40">
+              {"Teléfono: "}
+              <span className="text-right">
+                {debtor?.telefono ? (
+                  <a>{debtor?.telefono}</a>
+                ) : (
+                  <span>{"-"}</span>
+                )}
+              </span>
+            </div>
+          </div>
+        </Dialog>
       </div>
     </Layout>
   );

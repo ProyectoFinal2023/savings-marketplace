@@ -15,6 +15,14 @@ const AdminPage: NextPage = () => {
           <Button onClick={() => void push("/admin/debtor-search")}>
             Módulo Deudores
           </Button>
+          <Button
+            onClick={() => {
+              window.location.href =
+                "https://lookerstudio.google.com/reporting/613fb282-64d7-48e6-892e-b59c24a82225";
+            }}
+          >
+            Business Analytics
+          </Button>
           <Button onClick={() => void push("/plans")}>
             Ver Planes Disponibles
           </Button>
