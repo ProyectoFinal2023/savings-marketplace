@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { CarPhoto as CarPhotoModel, Prisma } from "@prisma/client";
+import type { CarPhoto as CarPhotoModel, Prisma, User } from "@prisma/client";
 
 import { Card } from "primereact/card";
 import { Galleria } from "primereact/galleria";
@@ -18,10 +18,12 @@ import { toast } from "react-toastify";
 
 type Props = {
   plan: PlanDetail;
+  user: User;
 };
 
-const PlanView = ({ plan }: Props) => {
-  console.log('plan', plan);
+const PlanView = ({ plan, user }: Props) => {
+  const contactInfo: any = plan.seller.contactInfo;
+  const __contactInfo = JSON.parse(contactInfo ?? '');
   const carPhotos = plan.carModel?.carPhotos?.length
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
@@ -107,7 +109,11 @@ const PlanView = ({ plan }: Props) => {
   );
 
   function handleClick() {
-    toggleModal();
+    if (plan.usersInPlan.some((u) => u.userId == user.id)) {
+      setSuccessVisible(true);
+    } else {
+      toggleModal();
+    }
   }
 
   const currencyFormat = (cash: number) =>
@@ -160,9 +166,9 @@ const PlanView = ({ plan }: Props) => {
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
               onClick={handleClick}
-              disabled={plan.status.name !== 'activo'}
+              disabled={plan.status.name !== 'activo' && !plan.usersInPlan.some((u) => u.userId == user.id)}
             >
-              {plan.status.name === 'pendiente' ? "Reservado" : "Solicitar Plan"}
+              {plan.status.name === 'pendiente' ? (plan.usersInPlan.some((u) => u.userId == user.id) ? "Mostrar contacto" : "Reservado") : "Solicitar Plan"}
             </Button>
             <Dialog visible={visible} footer={footerContent} onHide={toggleModal}>
               <p>¿Está seguro de que quiere agregar este plan a su cartera?</p>
@@ -212,8 +218,26 @@ const PlanView = ({ plan }: Props) => {
               ))}
             </div>
           </div>
-          <Dialog visible={successVisible} header={<p className="text-4xl">Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
+          <Dialog visible={successVisible} header={<p className="text-4xl">¡Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
             <p>Su plan ha sido reservado con éxito. Para continuar, debe ponerse en contacto con el comprador.</p>
+            <div className="flex flex-col mt-3">
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>Nombre:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["name"]}</span></div>
+              </div>
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>Email de contacto:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["email"]}</span></div>
+              </div>
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>Teléfono de contacto:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["phone_number"]}</span></div>
+              </div>
+              <div className="flex flex-row">
+                <div className="w-1/3"><span>CBU/CVU:</span></div>
+                <div className="w-1/3"><span>{__contactInfo["bank_info"]}</span></div>
+              </div>
+            </div>
           </Dialog>
         </section>
       )}

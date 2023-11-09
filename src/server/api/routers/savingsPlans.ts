@@ -21,6 +21,8 @@ export const savingsPlansRouter = createTRPCRouter({
           id,
         },
         include: {
+          seller: true,
+          usersInPlan: true,
           carModel: {
             include: {
               carPhotos: true,
