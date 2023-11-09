@@ -57,4 +57,7 @@ export const adminRouter = createTRPCRouter({
         hasDebt: !!validated.data.length,
       };
     }),
+  getPaymentMethods: publicProcedure.query(async ({ ctx }) => {
+    return await ctx.prisma.paymentMethod.findMany();
+  }),
 });

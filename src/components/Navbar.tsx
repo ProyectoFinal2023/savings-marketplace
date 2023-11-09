@@ -26,7 +26,9 @@ export const Navbar = ({ className }: NavbarProps) => {
         <li className="ml-auto shrink-0">
           <ul className="flex items-center gap-4">
             <li>
-              <Button>Comprar un plan</Button>
+              <Button onClick={() => void push("/plans")}>
+                Comprar un plan
+              </Button>
             </li>
             <li>
               <Button severity="info" onClick={() => void push("/sell-plan")}>

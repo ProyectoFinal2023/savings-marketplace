@@ -1,4 +1,5 @@
 import { InputText as PrimeInputText } from "primereact/inputtext";
+import { KeyFilterType } from "primereact/keyfilter";
 import {
   type FieldValues,
   type Path,
@@ -16,6 +17,7 @@ type InputTextProps<T extends FieldValues> = {
   required?: boolean;
   maxLength?: number;
   disabled?: boolean;
+  keyfilter?: KeyFilterType;
 };
 
 export const InputText = <T extends FieldValues>(props: InputTextProps<T>) => {
@@ -28,6 +30,7 @@ export const InputText = <T extends FieldValues>(props: InputTextProps<T>) => {
     required = true,
     maxLength,
     disabled,
+    keyfilter,
   } = props;
 
   return (
@@ -41,6 +44,7 @@ export const InputText = <T extends FieldValues>(props: InputTextProps<T>) => {
         placeholder={placeholder}
         maxLength={maxLength}
         disabled={disabled}
+        keyfilter={keyfilter}
       />
       <ErrorMessage errors={errors} name={name} />
     </div>
