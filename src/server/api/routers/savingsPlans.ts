@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { createPlanSchema } from "~/schemas/postPlanSchema";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const savingsPlansRouter = createTRPCRouter({
@@ -107,5 +108,28 @@ export const savingsPlansRouter = createTRPCRouter({
           },
         });
       })
-    })
+    }),
+  postPlan: publicProcedure
+    .input(createPlanSchema)
+    .mutation(async ({ ctx, input }) => {
+      console.log(input);
+      const status = await ctx.prisma.savingsPlanStatus.findFirstOrThrow({
+        where: { description: "Activo" },
+      });
+      return await ctx.prisma.savingsPlan.create({
+        data: {
+          title: input.title,
+          carModelId: input.carModel,
+          movingValue: Number(input.moving_value),
+          movingValueUSD: Number(input.priceUSD),
+          description: input.description,
+          plan_months: Number(input.plan_months),
+          plan_total_months: Number(input.plan_total_months),
+          paymentMethodId: input.paymentMethod,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          statusId: status?.id,
+        },
+      });
+    }),
 });

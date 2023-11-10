@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import type { CarPhoto as CarPhotoModel, Prisma, User } from "@prisma/client";
 
 import { Card } from "primereact/card";
@@ -22,8 +22,8 @@ type Props = {
 };
 
 const PlanView = ({ plan, user }: Props) => {
-  const contactInfo: any = plan.seller.contactInfo;
-  const __contactInfo = JSON.parse((contactInfo as string) ?? '');
+  const contactInfo: any = plan.seller?.contactInfo;
+  const __contactInfo = contactInfo ? JSON.parse((contactInfo as string) ?? '') : {};
   const carPhotos = plan.carModel?.carPhotos?.length
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
@@ -32,6 +32,8 @@ const PlanView = ({ plan, user }: Props) => {
   const [visible, setVisible] = useState(false);
   const [planStatus, setPlanStatus] = useState(plan.status.name);
   const [userHasPlan, setuserHasPlan] = useState(plan.usersInPlan.some((u) => u.userId == user.id));
+
+  const monthsLeft = useMemo(() => plan.plan_total_months > plan.plan_months ? plan.plan_total_months - plan.plan_months : plan.plan_total_months, [plan]);
 
   function toggleModal() {
     setVisible(!visible);
@@ -154,14 +156,14 @@ const PlanView = ({ plan, user }: Props) => {
         <div className="my-4 px-4">
           <div className="grid">
             <span className="text-2xl font-bold">
-              {plan.carModel.description}
+              {plan.title.charAt(0).toUpperCase() + plan.title.slice(1)} - {plan.carModel.description}
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
             <div className="row text-black">
               <p className="text-3xl">{currencyFormat(plan.movingValue)}</p>
               <p className="mt-2">
-                Valor de {currencyFormat(plan.movingValue * plan.plan_total_months)} {" "}
-                en {plan.plan_total_months} cuotas
+                {currencyFormat(plan.movingValue * monthsLeft)} {" "}
+                en {monthsLeft} cuotas
               </p>
             </div>
             <Button
@@ -178,74 +180,78 @@ const PlanView = ({ plan, user }: Props) => {
               <p>¿Está seguro de que quiere agregar este plan a su cartera?</p>
               <p>Al aceptar se encuentra de acuerdo con las condiciones.</p>
             </Dialog>
-          <Dialog visible={successVisible} header={<p className="text-4xl">¡Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
-            <p>Su plan ha sido reservado con éxito. Para continuar, debe ponerse en contacto con el comprador.</p>
-            <div className="flex flex-col mt-3">
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>Nombre:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["name"]}</span></div>
-              </div>
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>Email de contacto:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["email"]}</span></div>
-              </div>
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>Teléfono de contacto:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["phone_number"]}</span></div>
-              </div>
-              <div className="flex flex-row">
-                <div className="w-1/3"><span>CBU/CVU:</span></div>
-                <div className="w-1/3"><span>{__contactInfo["bank_info"]}</span></div>
-              </div>
-            </div>
-          </Dialog>
+            <Dialog visible={successVisible} header={<p className="text-4xl">¡Felicidades!</p>} onHide={() => { setSuccessVisible(false); }}>
+              <p>Su plan ha sido reservado con éxito. Para continuar, debe ponerse en contacto con el comprador.</p>
+              {contactInfo && (
+                < div className="flex flex-col mt-3">
+                  <div className="flex flex-row">
+                    <div className="w-1/3"><span>Nombre:</span></div>
+                    <div className="w-1/3"><span>{__contactInfo["name"]}</span></div>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="w-1/3"><span>Email de contacto:</span></div>
+                    <div className="w-1/3"><span>{__contactInfo["email"]}</span></div>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="w-1/3"><span>Teléfono de contacto:</span></div>
+                    <div className="w-1/3"><span>{__contactInfo["phone_number"]}</span></div>
+                  </div>
+                  <div className="flex flex-row">
+                    <div className="w-1/3"><span>CBU/CVU:</span></div>
+                    <div className="w-1/3"><span>{__contactInfo["bank_info"]}</span></div>
+                  </div>
+                </div>
+              )}
+            </Dialog>
           </div>
         </div>
-      </div>
+      </div >
       <div className="grid py-4 text-justify">
         <Fieldset legend={legendTemplate}>{plan.description}</Fieldset>
       </div>
-      {plan.carModel.carAttributes && (
-        <section id="vehicle-carachteristics" className="contents">
-          <div className="block">
-            <div className="col-span-12 col-start-1 mb-2">
-              <span className="text-md md:text-2xl">
-                Características del vehículo
-              </span>
+      {
+        plan.carModel.carAttributes && (
+          <section id="vehicle-carachteristics" className="contents">
+            <div className="block">
+              <div className="col-span-12 col-start-1 mb-2">
+                <span className="text-md md:text-2xl">
+                  Características del vehículo
+                </span>
+              </div>
+              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+                {Object.entries(
+                  plan.carModel.carAttributes as Prisma.JsonObject
+                ).map(([tableName, attributes]) => (
+                  <div className="col-auto w-full md:w-full" key={tableName}>
+                    <span className="font-bold">{tableName}</span>
+                    <table className="mx-auto mt-2 table-auto rounded border-2 border-solid border-[#ededed] text-[14px]">
+                      <tbody>
+                        {attributes &&
+                          Object.entries(attributes)?.map(
+                            ([attrName, attr], index) => (
+                              <tr
+                                className={
+                                  index % 2 !== 0 ? "bg-[#0000000a]" : "bg-[#fff]"
+                                }
+                                key={attrName}
+                              >
+                                <th className="px-6 py-4 text-left">
+                                  {attrName}
+                                </th>
+                                <td className="px-6 py-4 text-left">{attr}</td>
+                              </tr>
+                            )
+                          )}
+                      </tbody>
+                    </table>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-              {Object.entries(
-                plan.carModel.carAttributes as Prisma.JsonObject
-              ).map(([tableName, attributes]) => (
-                <div className="col-auto w-full md:w-full" key={tableName}>
-                  <span className="font-bold">{tableName}</span>
-                  <table className="mx-auto mt-2 table-auto rounded border-2 border-solid border-[#ededed] text-[14px]">
-                    <tbody>
-                      {attributes &&
-                        Object.entries(attributes)?.map(
-                          ([attrName, attr], index) => (
-                            <tr
-                              className={
-                                index % 2 !== 0 ? "bg-[#0000000a]" : "bg-[#fff]"
-                              }
-                              key={attrName}
-                            >
-                              <th className="px-6 py-4 text-left">
-                                {attrName}
-                              </th>
-                              <td className="px-6 py-4 text-left">{attr}</td>
-                            </tr>
-                          )
-                        )}
-                    </tbody>
-                  </table>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-    </Card>
+          </section>
+        )
+      }
+    </Card >
   );
 };
 

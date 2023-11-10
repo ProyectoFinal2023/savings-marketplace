@@ -73,7 +73,8 @@ model UserInSavingsPlan {
 model SavingsPlan {
   id                String              @id @default(cuid())
   statusId          String
-  portfolioId       String
+  portfolioId       String?
+  sellerId          String?
   title             String
   description       String
   plan_months       Int
@@ -84,13 +85,12 @@ model SavingsPlan {
   carModelId        String
   movingValue       Int
   movingValueUSD    Int                 @default(300)
-  sellerId          String
-  status            SavingsPlanStatus   @relation(fields: [statusId], references: [id])
+  status            SavingsPlanStatus?   @relation(fields: [statusId], references: [id])
   usersInPlan       UserInSavingsPlan[]
-  portfolio         Portfolio           @relation(fields: [portfolioId], references: [id])
+  portfolio         Portfolio?          @relation(fields: [portfolioId], references: [id])
   paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
   carModel          CarModel            @relation(fields: [carModelId], references: [id])
-  seller            SavingsPlanSeller   @relation(fields: [sellerId], references: [id])
+  seller            SavingsPlanSeller?   @relation(fields: [sellerId], references: [id])
 
   @@index([statusId])
   @@index([paymentMethodId])
