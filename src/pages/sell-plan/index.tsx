@@ -122,15 +122,18 @@ const SellPlanPage: NextPage<
                   errors={errors}
                 />
               </div>
-              <div className="flex items-start gap-4">
-                <InputText
-                  register={register}
-                  name="moving_value"
-                  placeholder="Ej. 56700"
-                  label="Cuota mensual actual"
-                  keyfilter={"int"}
-                  errors={errors}
-                />
+              <div className="flex flex-wrap items-start -mx-3">
+                <div className="w-1/2 px-3 pr-2">
+                  <InputText
+                    register={register}
+                    name="moving_value"
+                    placeholder="Ej. 56700"
+                    label="Cuota mensual actual"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+                <div className="w-1/2 px-3">
                 <InputText
                   register={register}
                   name="plan_months"
@@ -139,6 +142,10 @@ const SellPlanPage: NextPage<
                   keyfilter={"int"}
                   errors={errors}
                 />
+                </div>
+              </div>
+              <div className="flex flex-wrap items-start -mx-3 mb-5">
+                <div className="w-full px-3">
                 <InputText
                   register={register}
                   name="plan_total_months"
@@ -147,6 +154,7 @@ const SellPlanPage: NextPage<
                   keyfilter={"int"}
                   errors={errors}
                 />
+                </div>
               </div>
               <InputFile />
               <InputTextArea
