@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { createPlanSchema } from "~/schemas/postPlanSchema";
 
 export const savingsPlansRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -78,5 +79,53 @@ export const savingsPlansRouter = createTRPCRouter({
       ]);
 
       return { plans, total, size: input.search.size };
+    }),
+  pendingSavingsPlan: publicProcedure
+    .input(z.object({
+      id: z.string(),
+    }))
+    .mutation(async ({ ctx, input: { id } }) => {
+      const user = await ctx.prisma.user.findFirstOrThrow({
+        where: { clerkId: ctx.auth.userId },
+      });
+      return ctx.prisma.$transaction(async () => {
+        await ctx.prisma.savingsPlan.update({
+          where: {
+            id,
+          },
+          data: {
+            statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "pendiente" } })).id
+          },
+        });
+
+        await ctx.prisma.userInSavingsPlan.create({
+          data: {
+            planId: id,
+            userId: user.id,
+          },
+        });
+      })
+    }),
+  postPlan: publicProcedure
+    .input(createPlanSchema)
+    .mutation(async ({ ctx, input }) => {
+      const status = await ctx.prisma.savingsPlanStatus.findFirstOrThrow({
+        where: { description: "Activo" },
+      });
+      return await ctx.prisma.savingsPlan.create({
+        data: {
+          title: input.title,
+          carModelId: input.carModel,
+          movingValue: Number(input.moving_value),
+          movingValueUSD: Number(input.priceUSD),
+          description: input.description,
+          plan_months: Number(input.plan_months),
+          plan_total_months: Number(input.plan_total_months),
+          paymentMethodId: input.paymentMethod,
+          startDate: input.startDate,
+          endDate: input.endDate,
+          statusId: status?.id,
+        },
+      });
     }),
 });
