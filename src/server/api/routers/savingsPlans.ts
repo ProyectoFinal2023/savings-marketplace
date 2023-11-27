@@ -112,7 +112,6 @@ export const savingsPlansRouter = createTRPCRouter({
   postPlan: publicProcedure
     .input(createPlanSchema)
     .mutation(async ({ ctx, input }) => {
-      console.log(input);
       const status = await ctx.prisma.savingsPlanStatus.findFirstOrThrow({
         where: { description: "Activo" },
       });

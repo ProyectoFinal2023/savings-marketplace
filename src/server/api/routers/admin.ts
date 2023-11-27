@@ -4,9 +4,6 @@ import { TRPCError } from "@trpc/server";
 import { env } from "~/env.mjs";
 import { isAdminMiddleware } from "../middleware/isAdminMiddleware";
 
-
-// "https://getdebtbcratest.free.beeceptor.com/get_debt/20112997505";
-
 const CustomerValidator = z.object({
   data: z.array(
     z.object({
@@ -52,7 +49,6 @@ export const adminRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
-      console.log(body);
       // should prob validate the shape with Zod
       const validated = CustomerValidator.parse(body);
       return {

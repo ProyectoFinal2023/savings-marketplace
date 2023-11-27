@@ -1,5 +1,6 @@
 import { TRPCError } from "@trpc/server";
-import { middleware } from "../trpc";
+import { middleware, publicProcedure } from "../trpc";
+
 
 export const isAdminMiddleware = middleware(async ({ ctx, next }) => {
   const user = await ctx.prisma.user.findFirstOrThrow({
@@ -15,3 +16,5 @@ export const isAdminMiddleware = middleware(async ({ ctx, next }) => {
     ctx,
   });
 });
+
+export const adminProcedure = publicProcedure.use(isAdminMiddleware);

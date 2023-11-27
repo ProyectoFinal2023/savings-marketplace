@@ -17,9 +17,7 @@ const AdminPage: NextPage = () => {
           </Button>
           <Button
             onClick={() => {
-              window.location.href =
-                "https://lookerstudio.google.com/reporting/613fb282-64d7-48e6-892e-b59c24a82225";
-            }}
+              window.open("https://lookerstudio.google.com/reporting/613fb282-64d7-48e6-892e-b59c24a82225", '_blank');
           >
             Business Analytics
           </Button>

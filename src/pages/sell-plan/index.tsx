@@ -60,10 +60,8 @@ const SellPlanPage: NextPage<
   });
 
   const onSubmit = (data: SchemaT) => {
-    console.log(data);
     postPlan(data);
   };
-  console.log(errors, paymentMethods[0]?.id);
   return (
     <Layout classname="">
       <div className="px-8 py-4">
