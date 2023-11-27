@@ -18,7 +18,7 @@ const AdminPage: NextPage = () => {
           <Button
             onClick={() => {
               window.open("https://lookerstudio.google.com/reporting/613fb282-64d7-48e6-892e-b59c24a82225", '_blank');
-          >
+            }}>
             Business Analytics
           </Button>
           <Button onClick={() => void push("/plans")}>
