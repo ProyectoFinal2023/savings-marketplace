@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import { createPlanSchema } from "~/schemas/postPlanSchema";
+import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 
 export const savingsPlansRouter = createTRPCRouter({
   getAll: publicProcedure.query(({ ctx }) => {
@@ -22,6 +22,8 @@ export const savingsPlansRouter = createTRPCRouter({
           id,
         },
         include: {
+          seller: true,
+          usersInPlan: true,
           carModel: {
             include: {
               carPhotos: true,
@@ -29,6 +31,7 @@ export const savingsPlansRouter = createTRPCRouter({
           },
           status: {
             select: {
+              name: true,
               description: true,
             },
           },
@@ -39,7 +42,7 @@ export const savingsPlansRouter = createTRPCRouter({
           },
         },
       });
-  }),
+    }),
   getSavingsPlans: publicProcedure
     .input(
       z.object({

@@ -1,6 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { middleware, publicProcedure } from "../trpc";
 
+
 export const isAdminMiddleware = middleware(async ({ ctx, next }) => {
   const user = await ctx.prisma.user.findFirstOrThrow({
     where: { clerkId: ctx.auth.userId },

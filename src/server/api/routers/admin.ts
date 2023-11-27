@@ -4,9 +4,6 @@ import { TRPCError } from "@trpc/server";
 import { env } from "~/env.mjs";
 import { isAdminMiddleware } from "../middleware/isAdminMiddleware";
 
-
-// "https://getdebtbcratest.free.beeceptor.com/get_debt/20112997505";
-
 const CustomerValidator = z.object({
   data: z.array(
     z.object({

@@ -9,7 +9,11 @@ export const usersRouter = createTRPCRouter({
       const { clerkId } = input;
       return ctx.prisma.user.findFirst({
         where: { clerkId },
-        include: { address: true, guarantors: { include: { address: true } } },
+        include: {
+          address: true,
+          guarantors: { include: { address: true } },
+          userType: true,
+        },
       });
     }),
   upsertUser: publicProcedure
@@ -17,54 +21,57 @@ export const usersRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { address, carAsPayment, guarantors, id, ...user } = input;
 
-      return ctx.prisma.$transaction(async () => {
-        const res = await ctx.prisma.user.upsert({
-          create: {
-            ...user,
-            userType: {
-              connectOrCreate: {
-                create: { description: "Física" },
-                where: { description: "Física" },
+      return await ctx.prisma.$transaction(
+        async () => {
+          const res = await ctx.prisma.user.upsert({
+            create: {
+              ...user,
+              userType: {
+                connectOrCreate: {
+                  create: { description: "Física" },
+                  where: { description: "Física" },
+                },
               },
             },
-          },
-          update: {
-            ...user,
-          },
-          where: {
-            id: id ? id : "",
-          },
-        });
-        await ctx.prisma.address.upsert({
-          update: {
-            ...address,
-            users: {
-              connect: {
-                id: res.id,
-              },
+            update: {
+              ...user,
             },
-          },
-          create: {
-            ...address,
-            users: {
-              connect: {
-                id: res.id,
-              },
+            where: {
+              id: id ? id : "",
             },
-          },
-          where: {
-            id: address.id || "",
-          },
-        });
-        await Promise.all([
-          guarantors.map(({ address: _, ...g }) =>
-            ctx.prisma.guarantor.upsert({
-              create: { ...g, userId: res.id },
-              update: { ...g, userId: res.id },
-              where: { id: g.id ? g.id : 0 },
-            })
-          ),
-        ]);
-      });
+          });
+          await Promise.all([
+            ctx.prisma.address.upsert({
+              update: {
+                ...address,
+                users: {
+                  connect: {
+                    id: res.id,
+                  },
+                },
+              },
+              create: {
+                ...address,
+                users: {
+                  connect: {
+                    id: res.id,
+                  },
+                },
+              },
+              where: {
+                id: address.id || "",
+              },
+            }),
+            ...guarantors.map(({ address: _, ...g }) =>
+              ctx.prisma.guarantor.upsert({
+                create: { ...g, userId: res.id },
+                update: { ...g, userId: res.id },
+                where: { id: g.id ? g.id : 0 },
+              })
+            ),
+          ]);
+        },
+        { maxWait: 20000 }
+      );
     }),
 });
