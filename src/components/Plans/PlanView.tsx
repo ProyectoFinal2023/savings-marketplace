@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import type { CarPhoto as CarPhotoModel, Prisma, User } from "@prisma/client";
+import type { CarPhoto as CarPhotoModel, Prisma } from "@prisma/client";
 import React, { useMemo, useState } from "react";
 
 import { Button } from "primereact/button";
@@ -16,17 +16,16 @@ import { toast } from "react-toastify";
 import CarPhoto from "~/components/Cars/CarPhoto";
 import { type PlanDetail } from "~/types/plans";
 import { api } from "~/utils/api";
+import { type UserInfoT } from "~/types/userInfo";
 
 type Props = {
   plan: PlanDetail;
-  user: User;
+  user: UserInfoT;
 };
 
 const PlanView = ({ plan, user }: Props) => {
-  const contactInfo: any = plan.seller?.contactInfo;
-  const __contactInfo = contactInfo
-    ? JSON.parse((contactInfo as string) ?? "")
-    : {};
+  const contactInfo = plan.seller?.contactInfo;
+  const __contactInfo = contactInfo ? JSON.parse(contactInfo ?? "") : {};
   const carPhotos = plan.carModel?.carPhotos?.length
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
@@ -35,7 +34,7 @@ const PlanView = ({ plan, user }: Props) => {
   const [visible, setVisible] = useState(false);
   const [planStatus, setPlanStatus] = useState(plan?.status?.name || "");
   const [userHasPlan, setuserHasPlan] = useState(
-    plan.usersInPlan.some((u) => u.userId == user.id)
+    plan.usersInPlan.some((u) => u.userId == user?.id)
   );
 
   const monthsLeft = useMemo(
@@ -65,7 +64,7 @@ const PlanView = ({ plan, user }: Props) => {
       },
     });
 
-  function handleAccept(evt: React.MouseEvent<HTMLButtonElement>) {
+  function handleAccept(_: React.MouseEvent<HTMLButtonElement>) {
     setPlanToPending({ id: plan.id });
   }
 

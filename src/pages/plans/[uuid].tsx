@@ -9,6 +9,7 @@ import PlanView from "~/components/Plans/PlanView";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { type PlanDetail } from "~/types/plans";
 import { getAuth } from "@clerk/nextjs/server";
+import { type UserInfoT } from "~/types/userInfo";
 
 const PlansDetail: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -29,6 +30,7 @@ export default PlansDetail;
 export const getServerSideProps: GetServerSideProps<
   {
     onePlan: PlanDetail;
+    user: UserInfoT;
   },
   { uuid: string }
 > = async ({ params, req }) => {
@@ -44,7 +46,7 @@ export const getServerSideProps: GetServerSideProps<
   return {
     props: {
       onePlan,
-      user
+      user,
     },
   };
 };
