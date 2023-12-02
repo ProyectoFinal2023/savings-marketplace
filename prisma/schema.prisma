@@ -244,17 +244,3 @@ model Address {
 
   @@map("addresses")
 }
-
-model Guarantors {
-  id        Int     @id @default(autoincrement())
-  userId    String
-  name      String
-  surname   String
-  phone     String
-  email     String
-  cuit      String
-  addressId String?
-
-  @@index([addressId])
-  @@index([userId])
-}
