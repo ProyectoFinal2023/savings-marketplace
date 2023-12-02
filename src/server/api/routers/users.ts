@@ -19,6 +19,7 @@ export const usersRouter = createTRPCRouter({
   upsertUser: publicProcedure
     .input(registerSchema)
     .mutation(async ({ ctx, input }) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { address, carAsPayment, guarantors, id, ...user } = input;
 
       return await ctx.prisma.$transaction(

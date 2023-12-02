@@ -5,7 +5,6 @@ import React, {
   type PropsWithChildren,
   type Dispatch,
   type SetStateAction,
-  useEffect,
 } from "react";
 
 export const LoadingContext = React.createContext<{

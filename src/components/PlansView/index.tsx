@@ -1,7 +1,7 @@
 import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Paginator } from "primereact/paginator";
-import { DropdownOptionT, usePlansList } from "~/hooks/usePlansList";
+import { type DropdownOptionT, usePlansList } from "~/hooks/usePlansList";
 import { type PlanList, type SearchParams } from "~/types/plans";
 
 type PlansViewProps = {
@@ -17,7 +17,6 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
     onSubmit,
     onPageChange,
     dropdownOptions,
-    carModels,
     form: { register },
   } = usePlansList(search);
 

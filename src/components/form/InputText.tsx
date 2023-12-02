@@ -1,5 +1,5 @@
 import { InputText as PrimeInputText } from "primereact/inputtext";
-import { KeyFilterType } from "primereact/keyfilter";
+import { type KeyFilterType } from "primereact/keyfilter";
 import {
   type FieldValues,
   type Path,

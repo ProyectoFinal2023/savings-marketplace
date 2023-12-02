@@ -1,5 +1,5 @@
 import React from "react";
-import Image, { ImageProps } from "next/image";
+import Image, { type ImageProps } from "next/image";
 import { CarPhoto } from "@prisma/client";
 import { DefaultCar } from "public";
 
