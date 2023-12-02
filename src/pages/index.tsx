@@ -16,7 +16,7 @@ const Home: NextPage = (_props) => {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const clerkUser = getAuth(ctx.req);
   if (!clerkUser.userId) throw Error("Not authorized.");
-  const ssg = generateSSGHelper();
+  const ssg = generateSSGHelper(ctx.req);
   const user = await ssg.users.getByClerkId.fetch({
     clerkId: clerkUser.userId,
   });
