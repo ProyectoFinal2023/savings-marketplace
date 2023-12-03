@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps<
   },
   { uuid: string }
 > = async ({ params, req }) => {
-  const ssg = generateSSGHelper();
+  const ssg = generateSSGHelper(req);
   const onePlan = await ssg.savingsPlans.getOne.fetch({
     id: params?.uuid ?? "",
   });

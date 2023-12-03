@@ -24,6 +24,7 @@ model User {
   address           Address?            @relation(fields: [addressId], references: [id])
   userType          UserType            @relation(fields: [userTypeId], references: [id])
   userInSavingsPlan UserInSavingsPlan[]
+  sellerInSavingsPlan SavingsPlanSeller[]
   cars              Car[]
   guarantors        Guarantor[]
 
@@ -105,8 +106,11 @@ model SavingsPlanSeller {
   cuit        String        @unique
   name        String?
   contactInfo String?
+  userId      String?
   savingsPlan SavingsPlan[]
+  user        User?         @relation(fields: [userId], references: [id])
 
+  @@index([userId])
   @@map("savings_plan_sellers")
 }
 
@@ -243,18 +247,4 @@ model Address {
   guarantors     Guarantor[]
 
   @@map("addresses")
-}
-
-model Guarantors {
-  id        Int     @id @default(autoincrement())
-  userId    String
-  name      String
-  surname   String
-  phone     String
-  email     String
-  cuit      String
-  addressId String?
-
-  @@index([addressId])
-  @@index([userId])
 }

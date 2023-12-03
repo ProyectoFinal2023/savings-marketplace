@@ -182,8 +182,8 @@ export default SellPlanPage;
 export const getServerSideProps: GetServerSideProps<{
   models: RouterOutputs["carModels"]["getAll"];
   paymentMethods: RouterOutputs["admin"]["getPaymentMethods"];
-}> = async () => {
-  const ssg = generateSSGHelper();
+}> = async (ctx) => {
+  const ssg = generateSSGHelper(ctx.req);
 
   const models = await ssg.carModels.getAll.fetch();
   const paymentMethods = await ssg.admin.getPaymentMethods.fetch();

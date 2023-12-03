@@ -24,13 +24,13 @@ export const getServerSideProps: GetServerSideProps<{
   plans: PlanList;
   total: number;
   search: SearchParams;
-}> = async ({ query }) => {
+}> = async ({ query, req }) => {
   const title = query.title || "";
   if (typeof title !== "string") throw new Error();
   const page = Number(query.page) || 1;
   const size = Number(query.size) || 6;
 
-  const ssg = generateSSGHelper();
+  const ssg = generateSSGHelper(req);
   const search = { title, page, size };
   const { plans, total } = await ssg.savingsPlans.getSavingsPlans.fetch({
     search,
