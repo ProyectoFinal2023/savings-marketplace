@@ -7,7 +7,7 @@ import { type SelectItemOptionsType } from 'primereact/selectitem';
 interface ActionsButtonProps {
   item: any;
   actions: SelectItemOptionsType;
-  disabled: boolean;
+  disabled?: boolean;
 }
 
 const ActionsButton: React.FC<ActionsButtonProps> = ({ actions, item, disabled = false }) => {

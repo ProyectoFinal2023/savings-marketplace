@@ -4,6 +4,7 @@ import {
   type InferGetServerSidePropsType,
   type NextPage,
 } from "next";
+import { useRouter } from "next/router";
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
 import { Layout } from "~/components/Layout/Layout";
@@ -24,7 +25,7 @@ type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
 const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ userInSavingsPlan }) => {
-  console.log(userInSavingsPlan);
+  const { push } = useRouter();
   const [contactInfo, setContactInfo] = useState(
     { name: '', email: '', phone_number: '', bank_info: '' }
   );
@@ -95,6 +96,12 @@ const UsersInPlans: NextPage<
                               setShowContactInfo(true);
                             }
                           }] : [
+                            {
+                              label: 'Ver detalle',
+                              value: (savingPlan: SavingsPlanItem) => {
+                                void push(`/plans/${savingPlan.id}`);
+                              }
+                            },
                             {
                               label: 'Mostrar Contacto',
                               value: (savingPlan: SavingsPlanItem) => {

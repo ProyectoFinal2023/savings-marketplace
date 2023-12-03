@@ -1,16 +1,69 @@
+import type { Prisma } from "@prisma/client";
 import {
   type GetServerSideProps,
   type InferGetServerSidePropsType,
   type NextPage,
 } from "next";
+import { useRouter } from "next/router";
+import { SelectItemOptionsType } from "primereact/selectitem";
 import { Layout } from "~/components/Layout/Layout";
+import ActionsButton from "~/components/shared/ActionsButton";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import type { RouterOutputs } from "~/utils/api";
 import { formatARS, formatUSD } from "~/utils/strings";
 
+type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
+  include: {
+    carModel: Prisma.CarModelDefaultArgs,
+    status: Prisma.SavingsPlanStatusDefaultArgs,
+    seller: Prisma.SavingsPlanSellerDefaultArgs,
+  }
+}>
+
 const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ sellingPlans }) => {
+  const { push } = useRouter();
+
+  const actions: Record<'pendiente' | 'confirmado' | 'activo', SelectItemOptionsType> = {
+    pendiente: [
+      {
+        label: 'Ver detalle',
+        value: (savingPlan: SavingsPlanItem) => {
+          void push(`/plans/${savingPlan.id}`);
+        }
+      },
+      {
+        label: 'Confirmar',
+        value: (savingPlan: SavingsPlanItem) => {
+          console.log('Confirmar saving plan', savingPlan);
+        }
+      },
+      {
+        label: 'Rechazar',
+        value: (savingPlan: SavingsPlanItem) => {
+          console.log('Rechazar saving plan', savingPlan);
+        }
+      }
+    ],
+    confirmado: [
+      {
+        label: 'Ver detalle',
+        value: (savingPlan: SavingsPlanItem) => {
+          void push(`/plans/${savingPlan.id}`);
+        }
+      },
+    ],
+    activo: [
+      {
+        label: 'Ver detalle',
+        value: (savingPlan: SavingsPlanItem) => {
+          void push(`/plans/${savingPlan.id}`);
+        }
+      },
+    ]
+  }
+
   return (
     <Layout>
       <div className="flex flex-col p-12">
@@ -63,6 +116,15 @@ const UsersInPlans: NextPage<
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {savingsPlan.plan_total_months} Meses
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                        <ActionsButton
+                          item={savingsPlan}
+                          disabled={savingsPlan.status?.name == 'rechazado' || savingsPlan.status?.name == 'inactivo'}
+                          actions={(savingsPlan.status?.name !== 'rechazado' && savingsPlan.status?.name !== 'inactivo') ? (
+                            actions[(savingsPlan.status?.name as 'pendiente' | 'confirmado' | 'activo')]
+                          ) : []}
+                        />
                       </td>
                     </tr>
                   ))}
