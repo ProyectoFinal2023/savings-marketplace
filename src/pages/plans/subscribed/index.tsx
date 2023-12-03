@@ -13,7 +13,6 @@ import ActionsButton from "~/components/shared/ActionsButton";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { api, type RouterOutputs } from "~/utils/api";
 import { formatARS, formatUSD } from "~/utils/strings";
-import { ConfirmDialog } from 'primereact/confirmdialog';
 import { toast } from "react-toastify";
 import { confirmAction } from "~/utils/modal";
 
@@ -27,12 +26,12 @@ type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
 
 const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ savingPlans }) => {
+> = ({ savingsPlans }) => {
   const { push } = useRouter();
   const [contactInfo, setContactInfo] = useState(
     { name: '', email: '', phone_number: '', bank_info: '' }
   );
-  const [savingPlansState, setSavingPlansState] = useState(savingPlans);
+  const [savingPlansState, setSavingPlansState] = useState(savingsPlans);
   const { data: _savingPlans } = api.savingsPlans.getUserPlans.useQuery();
   const { mutate: cancelPendingPlan } = api.savingsPlans.cancelPendingSavingsPlan.useMutation({
     onSuccess: (data, variables) => {
@@ -47,7 +46,6 @@ const UsersInPlans: NextPage<
 
   return (
     <Layout>
-      <ConfirmDialog />
       <div className="flex flex-col p-12">
         <div className="mb-6">
           <h1 className="text-4xl font-black">Planes Asociados</h1>
@@ -160,14 +158,14 @@ const UsersInPlans: NextPage<
 export default UsersInPlans;
 
 export const getServerSideProps: GetServerSideProps<{
-  savingPlans: RouterOutputs["savingsPlans"]["getUserPlans"]
+  savingsPlans: RouterOutputs["savingsPlans"]["getUserPlans"]
 }> = async (ctx) => {
   const ssg = generateSSGHelper(ctx.req);
-  const savingPlans: RouterOutputs["savingsPlans"]["getUserPlans"] = await ssg.savingsPlans.getUserPlans.fetch();
+  const savingsPlans: RouterOutputs["savingsPlans"]["getUserPlans"] = await ssg.savingsPlans.getUserPlans.fetch();
 
   return {
     props: {
-      savingPlans
+      savingsPlans
     }
   };
 };

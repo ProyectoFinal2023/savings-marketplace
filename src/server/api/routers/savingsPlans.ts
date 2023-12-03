@@ -139,6 +139,69 @@ export const savingsPlansRouter = createTRPCRouter({
         });
       })
     }),
+    confirmPendingSavingsPlan: publicProcedure
+      .input(z.object({
+        id: z.string(),
+      }))
+      .mutation(async ({ ctx, input: { id } }) => {
+        return ctx.prisma.$transaction(async () => {
+          return await ctx.prisma.savingsPlan.update({
+            where: {
+              id,
+            },
+            include: {
+              status: true,
+              carModel: true,
+              seller: true,
+            },
+            data: {
+              statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "confirmado" } })).id
+            },
+          });
+        })
+      }),
+    rejectPendingSavingsPlan: publicProcedure
+      .input(z.object({
+        id: z.string(),
+      }))
+      .mutation(async ({ ctx, input: { id } }) => {
+        return ctx.prisma.$transaction(async () => {
+          return await ctx.prisma.savingsPlan.update({
+            where: {
+              id,
+            },
+            include: {
+              status: true,
+              carModel: true,
+              seller: true,
+            },
+            data: {
+              statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "rechazado" } })).id
+            },
+          });
+        })
+      }),
+    disableActiveSavingsPlan: publicProcedure
+        .input(z.object({
+          id: z.string(),
+        }))
+        .mutation(async ({ ctx, input: { id } }) => {
+          return ctx.prisma.$transaction(async () => {
+            return await ctx.prisma.savingsPlan.update({
+              where: {
+                id,
+              },
+              include: {
+                status: true,
+                carModel: true,
+                seller: true,
+              },
+              data: {
+                statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "inactivo" } })).id
+              },
+            });
+          })
+        }),
   postPlan: publicProcedure
     .input(createPlanSchema)
     .mutation(async ({ ctx, input }) => {

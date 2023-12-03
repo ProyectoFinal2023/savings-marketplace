@@ -6,10 +6,13 @@ import {
 } from "next";
 import { useRouter } from "next/router";
 import { SelectItemOptionsType } from "primereact/selectitem";
+import { useState } from "react";
+import { toast } from "react-toastify";
 import { Layout } from "~/components/Layout/Layout";
 import ActionsButton from "~/components/shared/ActionsButton";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
-import type { RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
+import { confirmAction } from "~/utils/modal";
 import { formatARS, formatUSD } from "~/utils/strings";
 
 type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
@@ -24,6 +27,37 @@ const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ savingsPlans }) => {
   const { push } = useRouter();
+  const [savingPlansState, setSavingPlansState] = useState(savingsPlans);
+
+  const { mutate: confirmPendingPlan } = api.savingsPlans.confirmPendingSavingsPlan.useMutation({
+    onSuccess: (data, variables) => {
+      toast.success("Reserva del plan aceptada con éxito.");
+      setSavingPlansState(savingPlansState.map((plan) => plan.id === variables.id ? data : plan ));
+    },
+    onError: () => {
+      toast.error("Hubo un error. Intente nuevamente más tarde.");
+    },
+  });
+
+  const { mutate: rejectPendingPlan } = api.savingsPlans.rejectPendingSavingsPlan.useMutation({
+    onSuccess: (data, variables) => {
+      toast.success("Reserva del plan rechazada con éxito.");
+      setSavingPlansState(savingPlansState.map((plan) => plan.id === variables.id ? data : plan ));
+    },
+    onError: () => {
+      toast.error("Hubo un error. Intente nuevamente más tarde.");
+    },
+  });
+
+  const { mutate: disableActivePlan } = api.savingsPlans.disableActiveSavingsPlan.useMutation({
+    onSuccess: (data, variables) => {
+      toast.success("Plan desactivado con éxito.");
+      setSavingPlansState(savingPlansState.map((plan) => plan.id === variables.id ? data : plan ));
+    },
+    onError: () => {
+      toast.error("Hubo un error. Intente nuevamente más tarde.");
+    },
+  });
 
   const actions: Record<'pendiente' | 'confirmado' | 'activo', SelectItemOptionsType> = {
     pendiente: [
@@ -36,13 +70,21 @@ const UsersInPlans: NextPage<
       {
         label: 'Confirmar',
         value: (savingPlan: SavingsPlanItem) => {
-          console.log('Confirmar saving plan', savingPlan);
+          confirmAction({
+            message: `¿Está seguro que desea confirmar el plan ${savingPlan.description}?`,
+            header: 'Confirmar reserva de plan',
+            accept: () => { confirmPendingPlan({ id: savingPlan.id }) }
+          });
         }
       },
       {
         label: 'Rechazar',
         value: (savingPlan: SavingsPlanItem) => {
-          console.log('Rechazar saving plan', savingPlan);
+          confirmAction({
+            message: `¿Está seguro que desea rechazar el plan ${savingPlan.description}?`,
+            header: 'Rechazar reserva de plan',
+            accept: () => { rejectPendingPlan({ id: savingPlan.id }) }
+          });
         }
       }
     ],
@@ -59,6 +101,16 @@ const UsersInPlans: NextPage<
         label: 'Ver detalle',
         value: (savingPlan: SavingsPlanItem) => {
           void push(`/plans/${savingPlan.id}`);
+        }
+      },
+      {
+        label: 'Dar de baja',
+        value: (savingPlan: SavingsPlanItem) => {
+          confirmAction({
+            message: `¿Está seguro que desea dar de baja el plan ${savingPlan.description}?`,
+            header: 'Dar de baja',
+            accept: () => { disableActivePlan({ id: savingPlan.id }) }
+          });
         }
       },
     ]
@@ -97,7 +149,7 @@ const UsersInPlans: NextPage<
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {savingsPlans?.map((savingsPlan, index) => (
+                  {savingPlansState?.map((savingsPlan, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {savingsPlan.description}
