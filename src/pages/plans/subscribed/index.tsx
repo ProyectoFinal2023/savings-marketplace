@@ -7,7 +7,6 @@ import {
 import { Dialog } from "primereact/dialog";
 import { useState } from "react";
 import { Layout } from "~/components/Layout/Layout";
-import AssociatedPlansTable from "~/components/Plans/AssociatedPlansTable";
 import ReservedPlanMessage from "~/components/Plans/ReservedPlanMessage";
 import ActionsButton from "~/components/shared/ActionsButton";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
