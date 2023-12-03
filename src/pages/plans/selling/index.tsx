@@ -22,7 +22,7 @@ type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
 
 const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ sellingPlans }) => {
+> = ({ savingsPlans }) => {
   const { push } = useRouter();
 
   const actions: Record<'pendiente' | 'confirmado' | 'activo', SelectItemOptionsType> = {
@@ -97,7 +97,7 @@ const UsersInPlans: NextPage<
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {sellingPlans?.map(({ savingsPlan }, index) => (
+                  {savingsPlans?.map((savingsPlan, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {savingsPlan.description}
@@ -141,14 +141,14 @@ const UsersInPlans: NextPage<
 export default UsersInPlans;
 
 export const getServerSideProps: GetServerSideProps<{
-  sellingPlans: RouterOutputs["savingsPlans"]["getSellingPlans"]
+  savingsPlans: RouterOutputs["savingsPlans"]["getSellingPlans"]
 }> = async (ctx) => {
   const ssg = generateSSGHelper(ctx.req);
-  const sellingPlans: RouterOutputs["savingsPlans"]["getSellingPlans"] = await ssg.savingsPlans.getSellingPlans.fetch();
+  const savingsPlans: RouterOutputs["savingsPlans"]["getSellingPlans"] = await ssg.savingsPlans.getSellingPlans.fetch();
 
   return {
     props: {
-      sellingPlans
+      savingsPlans
     }
   };
 };
