@@ -109,6 +109,36 @@ export const savingsPlansRouter = createTRPCRouter({
         });
       })
     }),
+  cancelPendingSavingsPlan: publicProcedure
+    .input(z.object({
+      id: z.string(),
+    }))
+    .mutation(async ({ ctx, input: { id } }) => {
+      const user = await ctx.prisma.user.findFirstOrThrow({
+        where: { clerkId: ctx.auth.userId },
+      });
+      return ctx.prisma.$transaction(async () => {
+        await ctx.prisma.savingsPlan.update({
+          where: {
+            id,
+          },
+          data: {
+            statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "activo" } })).id
+          },
+        });
+
+        await ctx.prisma.userInSavingsPlan.delete({
+          where: {
+            id: (await ctx.prisma.userInSavingsPlan.findFirstOrThrow({
+              where: {
+                planId: id,
+                userId: user.id
+              }
+            })).id
+          },
+        });
+      })
+    }),
   postPlan: publicProcedure
     .input(createPlanSchema)
     .mutation(async ({ ctx, input }) => {

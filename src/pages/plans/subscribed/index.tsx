@@ -11,8 +11,11 @@ import { Layout } from "~/components/Layout/Layout";
 import ReservedPlanMessage from "~/components/Plans/ReservedPlanMessage";
 import ActionsButton from "~/components/shared/ActionsButton";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
-import type { RouterOutputs } from "~/utils/api";
+import { api, type RouterOutputs } from "~/utils/api";
 import { formatARS, formatUSD } from "~/utils/strings";
+import { ConfirmDialog } from 'primereact/confirmdialog';
+import { toast } from "react-toastify";
+import { confirmAction } from "~/utils/modal";
 
 type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
   include: {
@@ -29,10 +32,22 @@ const UsersInPlans: NextPage<
   const [contactInfo, setContactInfo] = useState(
     { name: '', email: '', phone_number: '', bank_info: '' }
   );
+  const [savingPlansState, setSavingPlansState] = useState(savingPlans);
+  const { data: _savingPlans } = api.savingsPlans.getUserPlans.useQuery();
+  const { mutate: cancelPendingPlan } = api.savingsPlans.cancelPendingSavingsPlan.useMutation({
+    onSuccess: (data, variables) => {
+      toast.success("Reserva del plan cancelada con éxito.");
+      setSavingPlansState(savingPlansState.filter((plan) => plan.id !== variables.id));
+    },
+    onError: () => {
+      toast.error("Hubo un error. Intente nuevamente más tarde.");
+    },
+  });
   const [showContactInfo, setShowContactInfo] = useState(false);
 
   return (
     <Layout>
+      <ConfirmDialog />
       <div className="flex flex-col p-12">
         <div className="mb-6">
           <h1 className="text-4xl font-black">Planes Asociados</h1>
@@ -64,7 +79,7 @@ const UsersInPlans: NextPage<
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {savingPlans?.map((savingsPlan, index) => (
+                  {savingPlansState?.map((savingsPlan, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {savingsPlan.description}
@@ -112,7 +127,11 @@ const UsersInPlans: NextPage<
                             }, {
                               label: 'Cancelar',
                               value: (savingPlan: SavingsPlanItem) => {
-                                console.log(savingPlan);
+                                confirmAction({
+                                  message: `¿Está seguro que desea cancelar la reserva del plan ${savingPlan.description}?`,
+                                  header: 'Cancelar plan',
+                                  accept: () => { cancelPendingPlan({ id: savingPlan.id }) }
+                                });
                               }
                             }
                           ]) : []}
