@@ -136,18 +136,16 @@ export const savingsPlansRouter = createTRPCRouter({
       where: { clerkId: ctx.auth.userId },
     });
 
-    return ctx.prisma.userInSavingsPlan.findMany({
+    return ctx.prisma.savingsPlan.findMany({
       include: {
-        savingsPlan: {
-          include: {
-            status: true,
-            carModel: true,
-            seller: true,
-          }
-        },
+        status: true,
+        carModel: true,
+        seller: true,
       },
       where: {
-        userId: user.id,
+        usersInPlan: {
+          some: { userId: user.id},
+        }
       }
     })
   }),
@@ -156,18 +154,16 @@ export const savingsPlansRouter = createTRPCRouter({
       where: { clerkId: ctx.auth.userId },
     });
 
-    return ctx.prisma.savingsPlanSeller.findMany({
+    return ctx.prisma.savingsPlan.findMany({
       include: {
-        savingsPlan: {
-          include: {
-            status: true,
-            carModel: true,
-            seller: true,
-          }
-        },
+        status: true,
+        carModel: true,
+        seller: true,
       },
       where: {
-        userId: user.id,
+        seller: {
+          is: { userId: user.id }
+        }
       }
     })
   })
