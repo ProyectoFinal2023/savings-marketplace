@@ -131,4 +131,44 @@ export const savingsPlansRouter = createTRPCRouter({
         },
       });
     }),
+  getUserPlans: publicProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findFirstOrThrow({
+      where: { clerkId: ctx.auth.userId },
+    });
+
+    return ctx.prisma.userInSavingsPlan.findMany({
+      include: {
+        savingsPlan: {
+          include: {
+            status: true,
+            carModel: true,
+            seller: true,
+          }
+        },
+      },
+      where: {
+        userId: user.id,
+      }
+    })
+  }),
+  getSellingPlans: publicProcedure.query(async ({ ctx }) => {
+    const user = await ctx.prisma.user.findFirstOrThrow({
+      where: { clerkId: ctx.auth.userId },
+    });
+
+    return ctx.prisma.savingsPlanSeller.findMany({
+      include: {
+        savingsPlan: {
+          include: {
+            status: true,
+            carModel: true,
+            seller: true,
+          }
+        },
+      },
+      where: {
+        userId: user.id,
+      }
+    })
+  })
 });

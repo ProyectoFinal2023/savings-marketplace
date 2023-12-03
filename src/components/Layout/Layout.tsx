@@ -6,7 +6,7 @@ export const Layout = (props: PropsWithChildren<{ classname?: string }>) => {
   return (
     <main className="min-h-screen bg-white">
       <Navbar />
-      <section className={clsx(props.classname, "my-3 h-full")}>
+      <section className={clsx(props.classname, "my-3 h-full px-16")}>
         {props.children}
       </section>
     </main>

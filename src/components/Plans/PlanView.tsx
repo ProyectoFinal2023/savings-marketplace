@@ -17,6 +17,8 @@ import CarPhoto from "~/components/Cars/CarPhoto";
 import { type PlanDetail } from "~/types/plans";
 import { api } from "~/utils/api";
 import { type UserInfoT } from "~/types/userInfo";
+import ReservedPlanMessage from "./ReservedPlanMessage";
+import { formatARS } from "~/utils/strings";
 
 type Props = {
   plan: PlanDetail;
@@ -182,9 +184,9 @@ const PlanView = ({ plan, user }: Props) => {
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
             <div className="row text-black">
-              <p className="text-3xl">{currencyFormat(plan.movingValue)}</p>
+              <p className="text-3xl">{formatARS(plan.movingValue)}</p>
               <p className="mt-2">
-                {currencyFormat(plan.movingValue * monthsLeft)} en {monthsLeft}{" "}
+                {formatARS(plan.movingValue * monthsLeft)} en {monthsLeft}{" "}
                 cuotas
               </p>
             </div>
@@ -217,46 +219,9 @@ const PlanView = ({ plan, user }: Props) => {
                 setSuccessVisible(false);
               }}
             >
-              <p>
-                Su plan ha sido reservado con éxito. Para continuar, debe
-                ponerse en contacto con el comprador.
-              </p>
-              {contactInfo && (
-                <div className="mt-3 flex flex-col">
-                  <div className="flex flex-row">
-                    <div className="w-1/3">
-                      <span>Nombre:</span>
-                    </div>
-                    <div className="w-1/3">
-                      <span>{__contactInfo["name"]}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="w-1/3">
-                      <span>Email de contacto:</span>
-                    </div>
-                    <div className="w-1/3">
-                      <span>{__contactInfo["email"]}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="w-1/3">
-                      <span>Teléfono de contacto:</span>
-                    </div>
-                    <div className="w-1/3">
-                      <span>{__contactInfo["phone_number"]}</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-row">
-                    <div className="w-1/3">
-                      <span>CBU/CVU:</span>
-                    </div>
-                    <div className="w-1/3">
-                      <span>{__contactInfo["bank_info"]}</span>
-                    </div>
-                  </div>
-                </div>
-              )}
+              <ReservedPlanMessage
+                contactInfo={__contactInfo}
+              />
             </Dialog>
           </div>
         </div>

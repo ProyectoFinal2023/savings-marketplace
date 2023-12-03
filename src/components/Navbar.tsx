@@ -7,6 +7,7 @@ import { Button } from "primereact/button";
 import { Autosavings } from "public";
 import { env } from "~/env.mjs";
 import { routesPaths } from "~/routesPaths";
+import DropdownButton from "./shared/DropdownButton";
 
 type NavbarProps = {
   className?: string;
@@ -25,6 +26,22 @@ export const Navbar = ({ className }: NavbarProps) => {
         </li>
         <li className="ml-auto shrink-0">
           <ul className="flex items-center gap-4">
+            <li>
+              <DropdownButton
+                links={[
+                  {
+                    text: 'Venta',
+                    action: () => void push("/plans/selling")
+                  },
+                  {
+                    text: 'Compra',
+                    action: () => void push("/plans/subscribed")
+                  }
+                ]}
+              >
+                Planes Asociados
+              </DropdownButton>
+            </li>
             <li>
               <Button onClick={() => void push("/plans")}>
                 Comprar un plan
