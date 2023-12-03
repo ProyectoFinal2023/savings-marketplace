@@ -95,6 +95,9 @@ export const savingsPlansRouter = createTRPCRouter({
         await ctx.prisma.savingsPlan.update({
           where: {
             id,
+            status: {
+              is: { name: "activo" }
+            }
           },
           data: {
             statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "pendiente" } })).id
@@ -121,6 +124,9 @@ export const savingsPlansRouter = createTRPCRouter({
         await ctx.prisma.savingsPlan.update({
           where: {
             id,
+            status: {
+              is: { name: "pendiente" }
+            }
           },
           data: {
             statusId: (await ctx.prisma.savingsPlanStatus.findFirstOrThrow({ where: { name: "activo" } })).id
@@ -148,6 +154,9 @@ export const savingsPlansRouter = createTRPCRouter({
           return await ctx.prisma.savingsPlan.update({
             where: {
               id,
+              status: {
+                is: { name: "pendiente" }
+              }
             },
             include: {
               status: true,
@@ -169,6 +178,9 @@ export const savingsPlansRouter = createTRPCRouter({
           return await ctx.prisma.savingsPlan.update({
             where: {
               id,
+              status: {
+                is: { name: "pendiente" }
+              }
             },
             include: {
               status: true,
@@ -190,6 +202,9 @@ export const savingsPlansRouter = createTRPCRouter({
             return await ctx.prisma.savingsPlan.update({
               where: {
                 id,
+                status: {
+                  is: { name: "activo" }
+                }
               },
               include: {
                 status: true,
