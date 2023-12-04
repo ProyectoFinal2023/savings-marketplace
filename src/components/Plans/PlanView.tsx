@@ -196,13 +196,14 @@ const PlanView = ({ plan, user }: Props) => {
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
               onClick={handleClick}
-              disabled={planStatus !== "activo" && !userHasPlan}
+              disabled={(planStatus !== "activo" && !userHasPlan) || planStatus === "confirmado" || planStatus === "inactivo" }
             >
               {planStatus === "pendiente"
                 ? userHasPlan
                   ? "Mostrar contacto"
                   : "Reservado"
-                : "Solicitar Plan"}
+                : (planStatus === "confirmado" || planStatus === "inactivo" ? "No disponible" : "Solicitar Plan")
+              }
             </Button>
             <Dialog
               visible={visible}
