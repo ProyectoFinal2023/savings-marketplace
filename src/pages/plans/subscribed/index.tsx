@@ -32,7 +32,6 @@ const UsersInPlans: NextPage<
     { name: '', email: '', phone_number: '', bank_info: '' }
   );
   const [savingPlansState, setSavingPlansState] = useState(savingsPlans);
-  const { data: _savingPlans } = api.savingsPlans.getUserPlans.useQuery();
   const { mutate: cancelPendingPlan } = api.savingsPlans.cancelPendingSavingsPlan.useMutation({
     onSuccess: (data, variables) => {
       toast.success("Reserva del plan cancelada con éxito.");
@@ -48,7 +47,7 @@ const UsersInPlans: NextPage<
     <Layout>
       <div className="flex flex-col p-12">
         <div className="mb-6">
-          <h1 className="text-4xl font-black">Planes Asociados</h1>
+          <h1 className="text-4xl font-black">Mis Planes</h1>
         </div>
 
         <div className="overflow-x-auto">
@@ -101,7 +100,13 @@ const UsersInPlans: NextPage<
                         <ActionsButton
                           item={savingsPlan}
                           disabled={savingsPlan.status?.name == 'rechazado' || savingsPlan.status?.name == 'inactivo'}
-                          actions={(savingsPlan.status?.name !== 'rechazado' && savingsPlan.status?.name !== 'inactivo') ? (savingsPlan.status?.name !== 'pendiente' ? [{
+                          actions={(savingsPlan.status?.name !== 'rechazado' && savingsPlan.status?.name !== 'inactivo') ? (savingsPlan.status?.name !== 'pendiente' ? [
+                            {
+                              label: 'Ver detalle',
+                              value: (savingPlan: SavingsPlanItem) => {
+                                void push(`/plans/${savingPlan.id}`);
+                              }
+                            },{
                             label: 'Mostrar Contacto',
                             value: (savingPlan: SavingsPlanItem) => {
                               const _contactInfo = savingPlan.seller?.contactInfo;

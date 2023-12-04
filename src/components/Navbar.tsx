@@ -34,7 +34,7 @@ export const Navbar = ({ className }: NavbarProps) => {
                     action: () => void push("/plans/selling")
                   },
                   {
-                    text: 'Compra',
+                    text: 'Mis Planes',
                     action: () => void push("/plans/subscribed")
                   }
                 ]}

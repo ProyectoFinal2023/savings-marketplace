@@ -27,7 +27,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({ children, links }) => {
         {children}
       </Button>
       {isDropdownOpen && (
-        <div className="absolute top-full left-0 bg-white shadow-md mt-2 py-2 rounded w-full">
+        <div className="absolute top-full left-0 bg-white shadow-md mt-2 py-2 rounded w-full z-20">
           {links.map((link, index) => (
             <a
               key={index}
