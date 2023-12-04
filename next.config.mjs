@@ -9,7 +9,12 @@ import { withSuperjson } from "next-superjson";
 const config = {
   reactStrictMode: true,
   images: {
-    remotePatterns: [{ hostname: "upload.wikimedia.org" }],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
   },
 
   /**
