@@ -19,12 +19,14 @@ import { createPlanSchema } from "~/schemas/postPlanSchema";
 import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 import { api, type RouterOutputs } from "~/utils/api";
 import { toast } from "react-toastify";
+import { getAuth } from "@clerk/nextjs/server";
+import { type UserInfoT } from "~/types/userInfo";
 
 type SchemaT = z.infer<typeof createPlanSchema>;
 
 const SellPlanPage: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ models, paymentMethods }) => {
+> = ({ models, paymentMethods, user }) => {
   const { push } = useRouter();
   const { mutate: postPlan } = api.savingsPlans.postPlan.useMutation({
     onSuccess: () => {
@@ -51,6 +53,9 @@ const SellPlanPage: NextPage<
       priceUSD: "",
       plan_months: "",
       plan_total_months: "",
+      bank_info: "",
+      phone_number: user?.phone ?? "",
+      name: `${user?.name ?? ''} ${user?.surname ?? ''}` ?? "",
       moving_value: "",
       description: "",
       paymentMethod: paymentMethods[0]?.id,
@@ -142,13 +147,47 @@ const SellPlanPage: NextPage<
                   />
                 </div>
               </div>
-              <div className="-mx-3 mb-5 flex flex-wrap items-start">
+              <div className="-mx-3 flex flex-wrap items-start">
                 <div className="w-full px-3">
                   <InputText
                     register={register}
                     name="plan_total_months"
                     placeholder="Ej. 84"
                     label="Meses totales"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+              </div>
+              <div className="-mx-3 flex flex-wrap items-start">
+                <div className="w-1/2 px-3">
+                  <InputText
+                    register={register}
+                    name="name"
+                    placeholder="Ej. Jorge Perez"
+                    label="Nombre"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+                <div className="w-1/2 px-3">
+                  <InputText
+                    register={register}
+                    name="phone_number"
+                    placeholder="Ej. +541123456789"
+                    label="Número de teléfono"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+              </div>
+              <div className="-mx-3 mb-5 flex flex-wrap items-start">
+                <div className="w-full px-3">
+                  <InputText
+                    register={register}
+                    name="bank_info"
+                    placeholder="Ej. 02205556666777788889999"
+                    label="CBU"
                     keyfilter={"int"}
                     errors={errors}
                   />
@@ -182,13 +221,18 @@ export default SellPlanPage;
 export const getServerSideProps: GetServerSideProps<{
   models: RouterOutputs["carModels"]["getAll"];
   paymentMethods: RouterOutputs["admin"]["getPaymentMethods"];
+  user: UserInfoT;
 }> = async (ctx) => {
   const ssg = generateSSGHelper(ctx.req);
+  const clerkUser = getAuth(ctx.req);
+  if (!clerkUser.userId) throw Error("Not authorized.");
 
   const models = await ssg.carModels.getAll.fetch();
   const paymentMethods = await ssg.admin.getPaymentMethods.fetch();
+  const user = await ssg.users.getByClerkId.fetch({ clerkId: clerkUser.userId });
   return {
     props: {
+      user,
       models,
       paymentMethods,
     },
