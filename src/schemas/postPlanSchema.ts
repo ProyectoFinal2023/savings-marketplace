@@ -13,5 +13,7 @@ export const createPlanSchema = z.object({
   paymentMethod: z.string(),
   startDate: z.date(),
   endDate: z.date(),
-  // sellerId: z.string(),
+  bank_info: z.string().max(23, "Ingrese un CBU válido").nullable(),
+  phone_number: z.string(),
+  name: z.string(),
 });

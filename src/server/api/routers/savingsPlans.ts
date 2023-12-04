@@ -220,23 +220,55 @@ export const savingsPlansRouter = createTRPCRouter({
   postPlan: publicProcedure
     .input(createPlanSchema)
     .mutation(async ({ ctx, input }) => {
-      const status = await ctx.prisma.savingsPlanStatus.findFirstOrThrow({
-        where: { description: "Activo" },
+      const user = await ctx.prisma.user.findFirstOrThrow({
+        where: { clerkId: ctx.auth.userId },
       });
-      return await ctx.prisma.savingsPlan.create({
-        data: {
-          title: input.title,
-          carModelId: input.carModel,
-          movingValue: Number(input.moving_value),
-          movingValueUSD: Number(input.priceUSD),
-          description: input.description,
-          plan_months: Number(input.plan_months),
-          plan_total_months: Number(input.plan_total_months),
-          paymentMethodId: input.paymentMethod,
-          startDate: input.startDate,
-          endDate: input.endDate,
-          statusId: status?.id,
-        },
+      const status = await ctx.prisma.savingsPlanStatus.findFirstOrThrow({
+        where: { name: "activo" },
+      });
+      return ctx.prisma.$transaction(async () => {
+        const seller = await ctx.prisma.savingsPlanSeller.upsert({
+          where: {
+            cuit: user.cuit ?? '',
+          },
+          create: {
+            cuit: user.cuit ?? '',
+            name: `${user.name ?? ''} ${user.surname ?? ''}`,
+            contactInfo: JSON.stringify({
+              bank_info: input.bank_info,
+              phone_number: input.phone_number,
+              name: input.name,
+              email: user.email,
+            }),
+            userId: user.id,
+          },
+          update: {
+            contactInfo: JSON.stringify({
+              bank_info: input.bank_info,
+              phone_number: input.phone_number,
+              name: input.name,
+              email: user.email,
+            }),
+            userId: user.id,
+          }
+        });
+
+        return await ctx.prisma.savingsPlan.create({
+          data: {
+            title: input.title,
+            carModelId: input.carModel,
+            movingValue: Number(input.moving_value),
+            movingValueUSD: Number(input.priceUSD),
+            description: input.description,
+            plan_months: Number(input.plan_months),
+            plan_total_months: Number(input.plan_total_months),
+            paymentMethodId: input.paymentMethod,
+            startDate: input.startDate,
+            endDate: input.endDate,
+            statusId: status?.id,
+            sellerId: seller?.id,
+          },
+        });
       });
     }),
   getUserPlans: publicProcedure.query(async ({ ctx }) => {
