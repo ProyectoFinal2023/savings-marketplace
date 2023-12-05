@@ -17,7 +17,7 @@ import CarPhoto from "~/components/Cars/CarPhoto";
 import { type PlanDetail } from "~/types/plans";
 import { api } from "~/utils/api";
 import { type UserInfoT } from "~/types/userInfo";
-import ReservedPlanMessage from "./ReservedPlanMessage";
+import ReservedPlanMessage, { type ContactInfoT } from "./ReservedPlanMessage";
 import { formatARS } from "~/utils/strings";
 
 type Props = {
@@ -27,7 +27,18 @@ type Props = {
 
 const PlanView = ({ plan, user }: Props) => {
   const contactInfo = plan.seller?.contactInfo;
-  const __contactInfo = contactInfo ? JSON.parse(contactInfo ?? "") : {};
+  let __contactInfo: ContactInfoT;
+  try {
+    __contactInfo = contactInfo ? JSON.parse(contactInfo ?? "") : {};
+    console.log(__contactInfo);
+  } catch (err) {
+    __contactInfo = {
+      name: "John Doe",
+      email: "johndoe@gmail.com",
+      phone_number: "1234 5678",
+      bank_info: "00000",
+    };
+  }
   const carPhotos = plan.carModel?.carPhotos?.length
     ? plan.carModel?.carPhotos
     : [{ url: DefaultCar }];
@@ -196,14 +207,19 @@ const PlanView = ({ plan, user }: Props) => {
               raised
               style={{ marginTop: "2rem", justifyContent: "center" }}
               onClick={handleClick}
-              disabled={(planStatus !== "activo" && !userHasPlan) || planStatus === "confirmado" || planStatus === "inactivo" }
+              disabled={
+                (planStatus !== "activo" && !userHasPlan) ||
+                planStatus === "confirmado" ||
+                planStatus === "inactivo"
+              }
             >
               {planStatus === "pendiente"
                 ? userHasPlan
                   ? "Mostrar contacto"
                   : "Reservado"
-                : (planStatus === "confirmado" || planStatus === "inactivo" ? "No disponible" : "Solicitar Plan")
-              }
+                : planStatus === "confirmado" || planStatus === "inactivo"
+                ? "No disponible"
+                : "Solicitar Plan"}
             </Button>
             <Dialog
               visible={visible}
@@ -220,9 +236,7 @@ const PlanView = ({ plan, user }: Props) => {
                 setSuccessVisible(false);
               }}
             >
-              <ReservedPlanMessage
-                contactInfo={__contactInfo}
-              />
+              <ReservedPlanMessage contactInfo={__contactInfo} />
             </Dialog>
           </div>
         </div>

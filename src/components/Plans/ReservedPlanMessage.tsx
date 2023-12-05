@@ -1,20 +1,22 @@
-import React from 'react'
+import React from "react";
+
+export type ContactInfoT = {
+  name: string;
+  email: string;
+  phone_number: string;
+  bank_info: string;
+};
 
 type Props = {
-  contactInfo: {
-    name: string;
-    email: string;
-    phone_number: string;
-    bank_info: string;
-  };
-}
+  contactInfo: ContactInfoT;
+};
 
 const ReservedPlanMessage = ({ contactInfo }: Props) => {
   return (
     <>
       <p>
-        Su plan ha sido reservado con éxito. Para continuar, debe
-        ponerse en contacto con el comprador.
+        Su plan ha sido reservado con éxito. Para continuar, debe ponerse en
+        contacto con el comprador.
       </p>
       {contactInfo && (
         <div className="mt-3 flex flex-col">
@@ -53,7 +55,7 @@ const ReservedPlanMessage = ({ contactInfo }: Props) => {
         </div>
       )}
     </>
-  )
-}
+  );
+};
 
-export default ReservedPlanMessage
+export default ReservedPlanMessage;
