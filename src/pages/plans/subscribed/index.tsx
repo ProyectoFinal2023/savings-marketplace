@@ -18,29 +18,35 @@ import { confirmAction } from "~/utils/modal";
 
 type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
   include: {
-    carModel: Prisma.CarModelDefaultArgs,
-    status: Prisma.SavingsPlanStatusDefaultArgs,
-    seller: Prisma.SavingsPlanSellerDefaultArgs,
-  }
-}>
+    carModel: Prisma.CarModelDefaultArgs;
+    status: Prisma.SavingsPlanStatusDefaultArgs;
+    seller: Prisma.SavingsPlanSellerDefaultArgs;
+  };
+}>;
 
 const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ savingsPlans }) => {
   const { push } = useRouter();
-  const [contactInfo, setContactInfo] = useState(
-    { name: '', email: '', phone_number: '', bank_info: '' }
-  );
-  const [savingPlansState, setSavingPlansState] = useState(savingsPlans);
-  const { mutate: cancelPendingPlan } = api.savingsPlans.cancelPendingSavingsPlan.useMutation({
-    onSuccess: (data, variables) => {
-      toast.success("Reserva del plan cancelada con éxito.");
-      setSavingPlansState(savingPlansState.filter((plan) => plan.id !== variables.id));
-    },
-    onError: () => {
-      toast.error("Hubo un error. Intente nuevamente más tarde.");
-    },
+  const [contactInfo, setContactInfo] = useState({
+    name: "",
+    email: "",
+    phone_number: "",
+    bank_info: "",
   });
+  const [savingPlansState, setSavingPlansState] = useState(savingsPlans);
+  const { mutate: cancelPendingPlan } =
+    api.savingsPlans.cancelPendingSavingsPlan.useMutation({
+      onSuccess: (data, variables) => {
+        toast.success("Reserva del plan cancelada con éxito.");
+        setSavingPlansState(
+          savingPlansState.filter((plan) => plan.id !== variables.id)
+        );
+      },
+      onError: () => {
+        toast.error("Hubo un error. Intente nuevamente más tarde.");
+      },
+    });
   const [showContactInfo, setShowContactInfo] = useState(false);
 
   return (
@@ -99,45 +105,86 @@ const UsersInPlans: NextPage<
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         <ActionsButton
                           item={savingsPlan}
-                          disabled={savingsPlan.status?.name == 'rechazado' || savingsPlan.status?.name == 'inactivo'}
-                          actions={(savingsPlan.status?.name !== 'rechazado' && savingsPlan.status?.name !== 'inactivo') ? (savingsPlan.status?.name !== 'pendiente' ? [
-                            {
-                              label: 'Ver detalle',
-                              value: (savingPlan: SavingsPlanItem) => {
-                                void push(`/plans/${savingPlan.id}`);
-                              }
-                            },{
-                            label: 'Mostrar Contacto',
-                            value: (savingPlan: SavingsPlanItem) => {
-                              const _contactInfo = savingPlan.seller?.contactInfo;
-                              setContactInfo(_contactInfo ? JSON.parse(_contactInfo ?? "") as { name: string, email: string, phone_number: string, bank_info: string } : contactInfo);
-                              setShowContactInfo(true);
-                            }
-                          }] : [
-                            {
-                              label: 'Ver detalle',
-                              value: (savingPlan: SavingsPlanItem) => {
-                                void push(`/plans/${savingPlan.id}`);
-                              }
-                            },
-                            {
-                              label: 'Mostrar Contacto',
-                              value: (savingPlan: SavingsPlanItem) => {
-                                const _contactInfo = savingPlan.seller?.contactInfo;
-                                setContactInfo(_contactInfo ? JSON.parse(_contactInfo ?? "") as { name: string, email: string, phone_number: string, bank_info: string } : contactInfo);
-                                setShowContactInfo(true);
-                              }
-                            }, {
-                              label: 'Cancelar',
-                              value: (savingPlan: SavingsPlanItem) => {
-                                confirmAction({
-                                  message: `¿Está seguro que desea cancelar la reserva del plan ${savingPlan.description}?`,
-                                  header: 'Cancelar plan',
-                                  accept: () => { cancelPendingPlan({ id: savingPlan.id }) }
-                                });
-                              }
-                            }
-                          ]) : []}
+                          disabled={
+                            savingsPlan.status?.name == "rechazado" ||
+                            savingsPlan.status?.name == "inactivo"
+                          }
+                          actions={
+                            savingsPlan.status?.name !== "rechazado" &&
+                            savingsPlan.status?.name !== "inactivo"
+                              ? savingsPlan.status?.name !== "pendiente"
+                                ? [
+                                    {
+                                      label: "Ver detalle",
+                                      value: (savingPlan: SavingsPlanItem) => {
+                                        void push(`/plans/${savingPlan.id}`);
+                                      },
+                                    },
+                                    {
+                                      label: "Mostrar Contacto",
+                                      value: (savingPlan: SavingsPlanItem) => {
+                                        const _contactInfo =
+                                          savingPlan.seller?.contactInfo;
+                                        setContactInfo(
+                                          _contactInfo
+                                            ? (JSON.parse(
+                                                _contactInfo ?? ""
+                                              ) as {
+                                                name: string;
+                                                email: string;
+                                                phone_number: string;
+                                                bank_info: string;
+                                              })
+                                            : contactInfo
+                                        );
+                                        setShowContactInfo(true);
+                                      },
+                                    },
+                                  ]
+                                : [
+                                    {
+                                      label: "Ver detalle",
+                                      value: (savingPlan: SavingsPlanItem) => {
+                                        void push(`/plans/${savingPlan.id}`);
+                                      },
+                                    },
+                                    {
+                                      label: "Mostrar Contacto",
+                                      value: (savingPlan: SavingsPlanItem) => {
+                                        const _contactInfo =
+                                          savingPlan.seller?.contactInfo;
+                                        setContactInfo(
+                                          _contactInfo
+                                            ? (JSON.parse(
+                                                _contactInfo ?? ""
+                                              ) as {
+                                                name: string;
+                                                email: string;
+                                                phone_number: string;
+                                                bank_info: string;
+                                              })
+                                            : contactInfo
+                                        );
+                                        setShowContactInfo(true);
+                                      },
+                                    },
+                                    {
+                                      label: "Cancelar",
+                                      value: (savingPlan: SavingsPlanItem) => {
+                                        confirmAction({
+                                          message: `¿Está seguro que desea cancelar la reserva del plan ${savingPlan.title}?`,
+                                          header: "Cancelar plan",
+                                          accept: () => {
+                                            cancelPendingPlan({
+                                              id: savingPlan.id,
+                                            });
+                                          },
+                                        });
+                                      },
+                                    },
+                                  ]
+                              : []
+                          }
                         />
                       </td>
                     </tr>
@@ -163,14 +210,15 @@ const UsersInPlans: NextPage<
 export default UsersInPlans;
 
 export const getServerSideProps: GetServerSideProps<{
-  savingsPlans: RouterOutputs["savingsPlans"]["getUserPlans"]
+  savingsPlans: RouterOutputs["savingsPlans"]["getUserPlans"];
 }> = async (ctx) => {
   const ssg = generateSSGHelper(ctx.req);
-  const savingsPlans: RouterOutputs["savingsPlans"]["getUserPlans"] = await ssg.savingsPlans.getUserPlans.fetch();
+  const savingsPlans: RouterOutputs["savingsPlans"]["getUserPlans"] =
+    await ssg.savingsPlans.getUserPlans.fetch();
 
   return {
     props: {
-      savingsPlans
-    }
+      savingsPlans,
+    },
   };
 };

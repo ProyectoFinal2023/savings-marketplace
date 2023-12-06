@@ -17,11 +17,11 @@ import { formatARS, formatUSD } from "~/utils/strings";
 
 type SavingsPlanItem = Prisma.SavingsPlanGetPayload<{
   include: {
-    carModel: Prisma.CarModelDefaultArgs,
-    status: Prisma.SavingsPlanStatusDefaultArgs,
-    seller: Prisma.SavingsPlanSellerDefaultArgs,
-  }
-}>
+    carModel: Prisma.CarModelDefaultArgs;
+    status: Prisma.SavingsPlanStatusDefaultArgs;
+    seller: Prisma.SavingsPlanSellerDefaultArgs;
+  };
+}>;
 
 const UsersInPlans: NextPage<
   InferGetServerSidePropsType<typeof getServerSideProps>
@@ -29,92 +29,116 @@ const UsersInPlans: NextPage<
   const { push } = useRouter();
   const [savingPlansState, setSavingPlansState] = useState(savingsPlans);
 
-  const { mutate: confirmPendingPlan } = api.savingsPlans.confirmPendingSavingsPlan.useMutation({
-    onSuccess: (data, variables) => {
-      toast.success("Reserva del plan aceptada con éxito.");
-      setSavingPlansState(savingPlansState.map((plan) => plan.id === variables.id ? data : plan ));
-    },
-    onError: () => {
-      toast.error("Hubo un error. Intente nuevamente más tarde.");
-    },
-  });
+  const { mutate: confirmPendingPlan } =
+    api.savingsPlans.confirmPendingSavingsPlan.useMutation({
+      onSuccess: (data, variables) => {
+        toast.success("Reserva del plan aceptada con éxito.");
+        setSavingPlansState(
+          savingPlansState.map((plan) =>
+            plan.id === variables.id ? data : plan
+          )
+        );
+      },
+      onError: () => {
+        toast.error("Hubo un error. Intente nuevamente más tarde.");
+      },
+    });
 
-  const { mutate: rejectPendingPlan } = api.savingsPlans.rejectPendingSavingsPlan.useMutation({
-    onSuccess: (data, variables) => {
-      toast.success("Reserva del plan rechazada con éxito.");
-      setSavingPlansState(savingPlansState.map((plan) => plan.id === variables.id ? data : plan ));
-    },
-    onError: () => {
-      toast.error("Hubo un error. Intente nuevamente más tarde.");
-    },
-  });
+  const { mutate: rejectPendingPlan } =
+    api.savingsPlans.rejectPendingSavingsPlan.useMutation({
+      onSuccess: (data, variables) => {
+        toast.success("Reserva del plan rechazada con éxito.");
+        setSavingPlansState(
+          savingPlansState.map((plan) =>
+            plan.id === variables.id ? data : plan
+          )
+        );
+      },
+      onError: () => {
+        toast.error("Hubo un error. Intente nuevamente más tarde.");
+      },
+    });
 
-  const { mutate: disableActivePlan } = api.savingsPlans.disableActiveSavingsPlan.useMutation({
-    onSuccess: (data, variables) => {
-      toast.success("Plan desactivado con éxito.");
-      setSavingPlansState(savingPlansState.map((plan) => plan.id === variables.id ? data : plan ));
-    },
-    onError: () => {
-      toast.error("Hubo un error. Intente nuevamente más tarde.");
-    },
-  });
+  const { mutate: disableActivePlan } =
+    api.savingsPlans.disableActiveSavingsPlan.useMutation({
+      onSuccess: (data, variables) => {
+        toast.success("Plan desactivado con éxito.");
+        setSavingPlansState(
+          savingPlansState.map((plan) =>
+            plan.id === variables.id ? data : plan
+          )
+        );
+      },
+      onError: () => {
+        toast.error("Hubo un error. Intente nuevamente más tarde.");
+      },
+    });
 
-  const actions: Record<'pendiente' | 'confirmado' | 'activo', SelectItemOptionsType> = {
+  const actions: Record<
+    "pendiente" | "confirmado" | "activo",
+    SelectItemOptionsType
+  > = {
     pendiente: [
       {
-        label: 'Ver detalle',
+        label: "Ver detalle",
         value: (savingPlan: SavingsPlanItem) => {
           void push(`/plans/${savingPlan.id}`);
-        }
+        },
       },
       {
-        label: 'Confirmar',
+        label: "Confirmar",
         value: (savingPlan: SavingsPlanItem) => {
           confirmAction({
-            message: `¿Está seguro que desea confirmar el plan ${savingPlan.description}?`,
-            header: 'Confirmar reserva de plan',
-            accept: () => { confirmPendingPlan({ id: savingPlan.id }) }
+            message: `¿Está seguro que desea confirmar el plan ${savingPlan.title}?`,
+            header: "Confirmar reserva de plan",
+            accept: () => {
+              confirmPendingPlan({ id: savingPlan.id });
+            },
           });
-        }
+        },
       },
       {
-        label: 'Rechazar',
+        label: "Rechazar",
         value: (savingPlan: SavingsPlanItem) => {
           confirmAction({
-            message: `¿Está seguro que desea rechazar el plan ${savingPlan.description}?`,
-            header: 'Rechazar reserva de plan',
-            accept: () => { rejectPendingPlan({ id: savingPlan.id }) }
+            message: `¿Está seguro que desea rechazar el plan ${savingPlan.title}?`,
+            header: "Rechazar reserva de plan",
+            accept: () => {
+              rejectPendingPlan({ id: savingPlan.id });
+            },
           });
-        }
-      }
+        },
+      },
     ],
     confirmado: [
       {
-        label: 'Ver detalle',
+        label: "Ver detalle",
         value: (savingPlan: SavingsPlanItem) => {
           void push(`/plans/${savingPlan.id}`);
-        }
+        },
       },
     ],
     activo: [
       {
-        label: 'Ver detalle',
+        label: "Ver detalle",
         value: (savingPlan: SavingsPlanItem) => {
           void push(`/plans/${savingPlan.id}`);
-        }
+        },
       },
       {
-        label: 'Dar de baja',
+        label: "Dar de baja",
         value: (savingPlan: SavingsPlanItem) => {
           confirmAction({
-            message: `¿Está seguro que desea dar de baja el plan ${savingPlan.description}?`,
-            header: 'Dar de baja',
-            accept: () => { disableActivePlan({ id: savingPlan.id }) }
+            message: `¿Está seguro que desea dar de baja el plan ${savingPlan.title}?`,
+            header: "Dar de baja",
+            accept: () => {
+              disableActivePlan({ id: savingPlan.id });
+            },
           });
-        }
+        },
       },
-    ]
-  }
+    ],
+  };
 
   return (
     <Layout>
@@ -152,7 +176,7 @@ const UsersInPlans: NextPage<
                   {savingPlansState?.map((savingsPlan, index) => (
                     <tr key={index}>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {savingsPlan.description}
+                        {savingsPlan.title.substring(0, 15)}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {savingsPlan.carModel.description}
@@ -172,10 +196,21 @@ const UsersInPlans: NextPage<
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         <ActionsButton
                           item={savingsPlan}
-                          disabled={savingsPlan.status?.name == 'rechazado' || savingsPlan.status?.name == 'inactivo'}
-                          actions={(savingsPlan.status?.name !== 'rechazado' && savingsPlan.status?.name !== 'inactivo') ? (
-                            actions[(savingsPlan.status?.name as 'pendiente' | 'confirmado' | 'activo')]
-                          ) : []}
+                          disabled={
+                            savingsPlan.status?.name == "rechazado" ||
+                            savingsPlan.status?.name == "inactivo"
+                          }
+                          actions={
+                            savingsPlan.status?.name !== "rechazado" &&
+                            savingsPlan.status?.name !== "inactivo"
+                              ? actions[
+                                  savingsPlan.status?.name as
+                                    | "pendiente"
+                                    | "confirmado"
+                                    | "activo"
+                                ]
+                              : []
+                          }
                         />
                       </td>
                     </tr>
@@ -193,14 +228,15 @@ const UsersInPlans: NextPage<
 export default UsersInPlans;
 
 export const getServerSideProps: GetServerSideProps<{
-  savingsPlans: RouterOutputs["savingsPlans"]["getSellingPlans"]
+  savingsPlans: RouterOutputs["savingsPlans"]["getSellingPlans"];
 }> = async (ctx) => {
   const ssg = generateSSGHelper(ctx.req);
-  const savingsPlans: RouterOutputs["savingsPlans"]["getSellingPlans"] = await ssg.savingsPlans.getSellingPlans.fetch();
+  const savingsPlans: RouterOutputs["savingsPlans"]["getSellingPlans"] =
+    await ssg.savingsPlans.getSellingPlans.fetch();
 
   return {
     props: {
-      savingsPlans
-    }
+      savingsPlans,
+    },
   };
 };
