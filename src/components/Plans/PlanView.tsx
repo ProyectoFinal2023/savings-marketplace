@@ -242,7 +242,9 @@ const PlanView = ({ plan, user }: Props) => {
         </div>
       </div>
       <div className="grid py-4 text-justify">
-        <Fieldset legend={legendTemplate}>{plan.description}</Fieldset>
+        <Fieldset legend={legendTemplate} className=" whitespace-pre-line">
+          {plan.description}
+        </Fieldset>
       </div>
       {plan.carModel.carAttributes && (
         <section id="vehicle-carachteristics" className="contents">

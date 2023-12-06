@@ -54,7 +54,6 @@ export const usePlansList = (search: SearchParams) => {
       )}`}</span>
     );
   };
-
   const dropdownOptions: DropdownOptionT[] = [
     {
       text: "Vista Previa",
@@ -63,7 +62,10 @@ export const usePlansList = (search: SearchParams) => {
           <Card
             key={plan.id}
             title={plan.title}
-            subTitle={plan.description}
+            subTitle={
+              plan.description.substring(0, 31) +
+              (plan.description.length > 31 ? "..." : "")
+            }
             header={
               <button
                 onClick={() => {

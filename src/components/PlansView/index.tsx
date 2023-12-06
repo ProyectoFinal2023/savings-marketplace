@@ -19,7 +19,6 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
     dropdownOptions,
     form: { register },
   } = usePlansList(search);
-
   return (
     <article className="mx-auto h-full w-10/12">
       <header className="flex gap-4 py-5">
@@ -42,7 +41,7 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
       </section>
       <Paginator
         className="mx-auto mt-6 w-fit"
-        first={search.page + 1}
+        first={(search.page - 1) * search.size}
         rows={search.size}
         totalRecords={total}
         onPageChange={onPageChange}
