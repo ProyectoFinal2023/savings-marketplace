@@ -1,7 +1,9 @@
-import { type NextPage } from "next";
+import { getAuth } from "@clerk/nextjs/server";
+import { type GetServerSideProps, type NextPage } from "next";
 import { useRouter } from "next/router";
 import { Button } from "primereact/button";
 import { Layout } from "~/components/Layout/Layout";
+import { generateSSGHelper } from "~/server/api/helpers/ssgHelper";
 
 const AdminPage: NextPage = () => {
   const { push } = useRouter();
@@ -31,3 +33,23 @@ const AdminPage: NextPage = () => {
 };
 
 export default AdminPage;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const clerkUser = getAuth(ctx.req);
+  if (!clerkUser.userId) throw Error("Not authorized.");
+
+  const ssg = generateSSGHelper(ctx.req);
+  const user = await ssg.users.getByClerkId.fetch({
+    clerkId: clerkUser.userId,
+  });
+  if (user?.userType.description !== "Admin") {
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: { } };
+};
