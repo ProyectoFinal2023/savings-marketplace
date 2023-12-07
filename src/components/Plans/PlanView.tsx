@@ -279,7 +279,7 @@ const PlanView = ({ plan, user }: Props) => {
               ).map(([tableName, attributes]) => (
                 <div className="mx-auto flex flex-col items-start" key={tableName}>
                   <div className="mx-auto mt-4 md:m-0"><span className="font-bold">{tableName}</span></div>
-                  <table className="mt-2 table-auto sm:table-fixed lg:table-auto rounded border-2 border-solid border-[#ededed] text-[14px] w-auto sm:w-[30rem] lg:w-auto">
+                  <table className="mt-2 table-fixed xs:table-auto sm:table-fixed lg:table-auto rounded border-2 border-solid border-[#ededed] text-[14px] w-[15rem] xs:w-auto sm:w-[30rem] lg:w-auto">
                     <tbody>
                       {attributes &&
                         Object.entries(attributes)?.map(
@@ -293,7 +293,7 @@ const PlanView = ({ plan, user }: Props) => {
                               <th className="px-6 py-4 text-left">
                                 {attrName}
                               </th>
-                              <td className="px-6 py-4 text-left">{attr}</td>
+                              <td className="px-6 py-4 text-left break-words sm:break-normal">{attr}</td>
                             </tr>
                           )
                         )}
