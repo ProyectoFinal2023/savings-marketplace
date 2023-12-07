@@ -10,10 +10,10 @@ const AdminPage: NextPage = () => {
 
   return (
     <Layout>
-      <div className="mx-auto my-16 h-60 w-3/5 rounded-lg bg-dark p-4 text-white">
+      <div className="card mx-auto my-16 w-3/5 rounded-lg bg-dark p-4 text-white">
         <h1 className="mb-2 text-2xl font-semibold">Admin Dashboard</h1>
         <p>A continuación se muestran los paneles disponibles.</p>
-        <div className="mt-16 flex w-full justify-center gap-4">
+        <div className="mt-8 md:mt-16 flex w-full justify-center gap-4 md:flex-row flex-col">
           <Button onClick={() => void push("/admin/debtor-search")}>
             Módulo Deudores
           </Button>
