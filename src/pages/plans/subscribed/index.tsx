@@ -84,8 +84,8 @@ const UsersInPlans: NextPage<
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {savingPlansState?.map((savingsPlan, index) => (
                     <tr key={index}>
-                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                        {savingsPlan.description}
+                      <td className="px-6 py-4 text-sm text-gray-500 truncate max-w-xs">
+                        {savingsPlan.title}
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {savingsPlan.carModel.description}
