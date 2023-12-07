@@ -27,7 +27,12 @@ const Drawer: React.FC<{ open: boolean, setOpen: React.Dispatch<React.SetStateAc
             <div className="relative w-screen max-w-xs">
               <div className="h-full flex flex-col py-6 bg-dark shadow-xl overflow-y-scroll">
                 <div className="h-min-12 h-min px-8 pb-8" style={{ minHeight: "64px", borderBottom: "1px solid #ddd" }} >
-                  <Image alt="Autosavings Logo" src={Autosavings} height={48} />
+                  <div className="flex flex-row items-center">
+                    <Image alt="Autosavings Logo" src={Autosavings} height={48} />
+                    <div className="mx-4" onClick={() => closeDrawer()} >
+                      <span className="text-gray-300"><i className="pi pi-times"></i></span>
+                    </div>
+                  </div>
                 </div>
                 {/* Your drawer content here */}
                 <ul className="flex flex-col gap-4 p-8">
