@@ -243,13 +243,13 @@ const PlanView = ({ plan, user }: Props) => {
                 Características del vehículo
               </span>
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
               {Object.entries(
                 plan.carModel.carAttributes as Prisma.JsonObject
               ).map(([tableName, attributes]) => (
-                <div className="col-auto w-full md:w-full" key={tableName}>
-                  <span className="font-bold">{tableName}</span>
-                  <table className="mx-auto mt-2 table-auto rounded border-2 border-solid border-[#ededed] text-[14px]">
+                <div className="mx-auto flex flex-col items-start" key={tableName}>
+                  <div className="mx-auto mt-4 md:m-0"><span className="font-bold">{tableName}</span></div>
+                  <table className="mt-2 table-auto sm:table-fixed lg:table-auto rounded border-2 border-solid border-[#ededed] text-[14px] w-auto sm:w-[30rem] lg:w-auto">
                     <tbody>
                       {attributes &&
                         Object.entries(attributes)?.map(
