@@ -22,12 +22,12 @@ export const Navbar = ({ className }: NavbarProps) => {
   return (
     <nav className={clsx(className, "h-16 w-full bg-dark shadow-md")}>
       <ul className="flex h-full w-full items-center pl-9 pr-5 py-2">
-        <li className="hidden md:list-item shrink-0 text-light">
+        <li className="hidden lg:list-item shrink-0 text-light">
           <Link href={routesPaths.landing}>
             <Image alt="Autosavings Logo" src={Autosavings} height={48} />
           </Link>
         </li>
-        <li className="hidden md:list-item ml-auto shrink-0">
+        <li className="hidden lg:list-item ml-auto shrink-0">
           <ul className="flex items-center gap-4">
             <li>
               <DropdownButton
@@ -60,7 +60,7 @@ export const Navbar = ({ className }: NavbarProps) => {
             </li>
           </ul>
         </li>
-        <li className="md:hidden list-item ml-auto shrink-0">
+        <li className="lg:hidden list-item ml-auto shrink-0">
           <ul className="flex items-center gap-4 !justify-self-end">
             <li>
               <UserButton afterSignOutUrl={env.NEXT_PUBLIC_CLERK_SIGN_IN_URL} />
@@ -68,7 +68,7 @@ export const Navbar = ({ className }: NavbarProps) => {
             <li className="ml-auto shrink-0">
               {/* Your existing component code */}
               {/* Add a button to toggle the drawer */}
-              <button className="block md:hidden" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
+              <button className="block lg:hidden" onClick={() => setIsDrawerOpen(!isDrawerOpen)}>
                 <i className="pi pi-bars text-white" style={{ fontSize: '24px' }} />
               </button>
             </li>
