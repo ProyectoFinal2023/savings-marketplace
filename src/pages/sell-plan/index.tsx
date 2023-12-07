@@ -78,57 +78,65 @@ const SellPlanPage: NextPage<
             className="mx-auto max-w-3xl"
           >
             <div className="flex flex-col gap-4">
-              <div className="flex items-start justify-around gap-4">
-                <InputText
-                  register={register}
-                  name="title"
-                  placeholder="Plan Hilux G3 Imperdible"
-                  label="Título"
-                  errors={errors}
-                />
-                <Controller
-                  name="carModel"
-                  control={control}
-                  render={({ field: { value, onChange, name } }) => (
-                    <div className="row-span-4 flex w-full flex-col items-stretch gap-2">
-                      <label htmlFor={name}>
-                        {"Modelo de Auto"}
-                        <span className="text-red-500">{" *"}</span>
-                      </label>
-                      <Dropdown
-                        placeholder="Modelo"
-                        options={models}
-                        optionLabel="description"
-                        optionValue="id"
-                        value={value}
-                        className="basis-1/2"
-                        onChange={onChange}
-                      />
-                      <ErrorMessage errors={errors} name={name} />
-                    </div>
-                  )}
-                />
-              </div>
-              <div className="flex items-start gap-4">
-                <InputText
-                  register={register}
-                  name="priceARS"
-                  placeholder="Ej. 300000"
-                  label="Precio de venta (ARS)"
-                  keyfilter={"int"}
-                  errors={errors}
-                />
-                <InputText
-                  register={register}
-                  name="priceUSD"
-                  placeholder="Ej. 3000"
-                  label="Precio de venta (USD)"
-                  keyfilter={"int"}
-                  errors={errors}
-                />
+              <div className="-mx-3 flex flex-wrap items-start">
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-6">
+                  <InputText
+                    register={register}
+                    name="title"
+                    placeholder="Plan Hilux G3 Imperdible"
+                    label="Título"
+                    errors={errors}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-2">
+                  <Controller
+                    name="carModel"
+                    control={control}
+                    render={({ field: { value, onChange, name } }) => (
+                      <div className="row-span-4 flex w-full flex-col items-stretch gap-2">
+                        <label htmlFor={name}>
+                          {"Modelo de Auto"}
+                          <span className="text-red-500">{" *"}</span>
+                        </label>
+                        <Dropdown
+                          placeholder="Modelo"
+                          options={models}
+                          optionLabel="description"
+                          optionValue="id"
+                          value={value}
+                          className="basis-1/2"
+                          onChange={onChange}
+                        />
+                        <ErrorMessage errors={errors} name={name} />
+                      </div>
+                    )}
+                  />
+                </div>
               </div>
               <div className="-mx-3 flex flex-wrap items-start">
-                <div className="w-1/2 px-3 pr-2">
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-6">
+                  <InputText
+                    register={register}
+                    name="priceARS"
+                    placeholder="Ej. 300000"
+                    label="Precio de venta (ARS)"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-2">
+                  <InputText
+                    register={register}
+                    name="priceUSD"
+                    placeholder="Ej. 3000"
+                    label="Precio de venta (USD)"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+              </div>
+              <div className="-mx-3 flex flex-wrap items-start">
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-6">
                   <InputText
                     register={register}
                     name="moving_value"
@@ -138,7 +146,7 @@ const SellPlanPage: NextPage<
                     errors={errors}
                   />
                 </div>
-                <div className="w-1/2 px-3 pr-2">
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-2">
                   <InputText
                     register={register}
                     name="moving_value_USD"
@@ -150,7 +158,7 @@ const SellPlanPage: NextPage<
                 </div>
               </div>
               <div className="-mx-3 flex flex-wrap items-start">
-                <div className="w-1/2 px-3">
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-6">
                   <InputText
                     register={register}
                     name="plan_months"
@@ -160,7 +168,7 @@ const SellPlanPage: NextPage<
                     errors={errors}
                   />
                 </div>
-                <div className="w-1/2 px-3">
+                <div className="w-full md:w-1/2 px-3 pr-2 mb-2">
                   <InputText
                     register={register}
                     name="plan_total_months"
@@ -172,7 +180,7 @@ const SellPlanPage: NextPage<
                 </div>
               </div>
               <div className="-mx-3 flex flex-wrap items-start">
-                <div className="w-1/2 px-3">
+                <div className="w-full md:w-1/2 px-3 mb-6">
                   <InputText
                     register={register}
                     name="name"
@@ -182,7 +190,7 @@ const SellPlanPage: NextPage<
                     errors={errors}
                   />
                 </div>
-                <div className="w-1/2 px-3">
+                <div className="w-full md:w-1/2 px-3 mb-2">
                   <InputText
                     register={register}
                     name="phone_number"
