@@ -91,7 +91,7 @@ export const usePlansList = (search: SearchParams) => {
                   src={plan.carModel?.carPhotos[0]?.url || DefaultCar}
                   width={380}
                   height={256}
-                  className=" h-64 object-cover"
+                  className=" h-64 object-cover !rounded-t-lg"
                 />
               </button>
             }
