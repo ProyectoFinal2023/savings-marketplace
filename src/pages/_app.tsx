@@ -4,6 +4,7 @@ import Head from "next/head";
 import "primeicons/primeicons.css";
 import "primereact/resources/primereact.min.css";
 import "primereact/resources/themes/viva-light/theme.css";
+import "~/assets/css/app.css"
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoadingProvider from "~/components/LoadingProvider";
