@@ -50,6 +50,27 @@ const PlanView = ({ plan, user }: Props) => {
     plan.usersInPlan.some((u) => u.userId == user?.id)
   );
 
+  const currencies: {
+    [K in 'ARS' | 'USD']: {
+      planPrice: 'sellingPrice' | 'sellingPriceUSD',
+      movingValue: 'movingValue' | 'movingValueUSD',
+      formatter: (cash: number) => string,
+    }
+  } = {
+    ARS: {
+      planPrice: 'sellingPrice',
+      movingValue: 'movingValue',
+      formatter: formatARS,
+    },
+    USD: {
+      planPrice: 'sellingPriceUSD',
+      movingValue: 'movingValueUSD',
+      formatter: formatUSD,
+    }
+  }
+
+  const [priceCurrency, setPriceCurrency] = useState(currencies['ARS']);
+
   const monthsLeft = useMemo(
     () =>
       plan.plan_total_months > plan.plan_months
@@ -178,16 +199,16 @@ const PlanView = ({ plan, user }: Props) => {
         {/* TODO - Responsivness */}
         <div className="my-4 px-4">
           <div className="grid">
-            <span className="text-sm py-2">ARS | USD</span>
+            <span className="text-md py-2"><span className="cursor-pointer hover:underline" onClick={() => setPriceCurrency(currencies['ARS'])}>ARS</span> | <span className="cursor-pointer hover:underline" onClick={() => setPriceCurrency(currencies['USD'])}>USD</span></span>
             <span className="text-2xl font-bold">
               {plan.title.charAt(0).toUpperCase() + plan.title.slice(1)} -{" "}
               {plan.carModel.description}
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
             <div className="row text-black">
-              <p className="text-3xl">{formatARS(plan.sellingPrice)} - {formatUSD(plan.sellingPriceUSD)}</p>
+              <p className="text-3xl">{priceCurrency.formatter(plan[priceCurrency.planPrice])}</p>
               <p className="mt-2">
-                Valor total del plan {formatARS(plan.movingValue * plan.plan_total_months)} en {monthsLeft} cuotas de {formatARS(plan.movingValue)}
+                Valuado en {priceCurrency.formatter(plan[priceCurrency.movingValue] * monthsLeft)} en {monthsLeft} cuotas de {priceCurrency.formatter(plan[priceCurrency.movingValue])}
               </p>
             </div>
             <Button
@@ -210,6 +231,13 @@ const PlanView = ({ plan, user }: Props) => {
                 ? "No disponible"
                 : "Solicitar Plan"}
             </Button>
+            <div className="flex flex-col text-black mt-4">
+              <p className="mt-2">Costo total del plan: {priceCurrency.formatter(plan[priceCurrency.movingValue] * plan.plan_total_months)}</p>
+              <p className="mt-2">Costo de la cuota: {priceCurrency.formatter(plan[priceCurrency.movingValue])}</p>
+              <p className="mt-2">Cantidad de cuotas del plan: {plan.plan_total_months}</p>
+              <p className="mt-2">Valor pendiente a pagar: {priceCurrency.formatter(plan[priceCurrency.movingValue] * monthsLeft)}</p>
+              <p className="mt-2">Cantidad de cuotas pendientes a pagar: {monthsLeft}</p>
+            </div>
             <Dialog
               visible={visible}
               footer={footerContent}
