@@ -70,8 +70,10 @@ export const usePlansList = (search: SearchParams) => {
             key={plan.id}
             title={plan.title}
             subTitle={
-              plan.description.substring(0, 31) +
-              (plan.description.length > 31 ? "..." : "")
+              <span>
+                {plan.description.substring(0, 31) +
+                  (plan.description.length > 31 ? "..." : "")}
+              </span>
             }
             header={
               <button
@@ -95,7 +97,7 @@ export const usePlansList = (search: SearchParams) => {
                 />
               </button>
             }
-            className=" shrink-0 basis-1/3-gap-6"
+            className=" shrink-0 basis-1/3-gap-6 mb-6 md:mb-0"
           />
         )),
     },

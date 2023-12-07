@@ -40,7 +40,7 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
           placeholder="Modo de vista"
         />
       </header>
-      <section className=" flex flex-wrap justify-start gap-6">
+      <section className=" lg:flex lg:flex-wrap justify-start gap-6">
         {planView.renderPlans(plans)}
       </section>
       <Paginator
