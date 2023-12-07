@@ -75,6 +75,7 @@ export const usePlansList = (search: SearchParams) => {
             }
             header={
               <button
+                className="w-full"
                 onClick={() => {
                   setPageLoading(true);
                   if (!pageLoading)
