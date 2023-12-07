@@ -10,7 +10,7 @@ datasource db {
 
 model User {
   id                  String              @id @default(cuid())
-  addressId           String?             @unique
+  addressId           String?
   userTypeId          String
   birthdate           DateTime?
   cuit                String?             @db.VarChar(11)
@@ -72,28 +72,29 @@ model UserInSavingsPlan {
 }
 
 model SavingsPlan {
-  id                String              @id @default(cuid())
-  statusId          String
-  portfolioId       String?
-  sellerId          String?
-  title             String
-  description       String
-  plan_months       Int
-  plan_total_months Int
-  paymentMethodId   String
-  startDate         DateTime
-  endDate           DateTime
-  carModelId        String
-  movingValue       Int
-  movingValueUSD    Int                 @default(300)
+  id                                                              String              @id @default(cuid())
+  statusId                                                        String
+  portfolioId                                                     String?
+  sellerId                                                        String?
+  title                                                           String
+  description                                                     String
+  plan_months                                                     Int
+  plan_total_months                                               Int
+  paymentMethodId                                                 String
+  startDate                                                       DateTime
+  endDate                                                         DateTime
+  carModelId                                                      String
+  movingValue                                                     Int
+  movingValueUSD                                                  Int                 @default(300)
   sellingPrice      Int                 @default(100000)
   sellingPriceUSD   Int                 @default(800)
-  status            SavingsPlanStatus?  @relation(fields: [statusId], references: [id])
-  usersInPlan       UserInSavingsPlan[]
-  portfolio         Portfolio?          @relation(fields: [portfolioId], references: [id])
-  paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
-  carModel          CarModel            @relation(fields: [carModelId], references: [id])
-  seller            SavingsPlanSeller?  @relation(fields: [sellerId], references: [id])
+  id_statusId_portfolioId_sellerId_title_description_plan_months_ String?             @map("id;statusId;portfolioId;sellerId;title;description;plan_months;") @db.VarChar(128)
+  status                                                          SavingsPlanStatus?  @relation(fields: [statusId], references: [id])
+  usersInPlan                                                     UserInSavingsPlan[]
+  portfolio                                                       Portfolio?          @relation(fields: [portfolioId], references: [id])
+  paymentMethod                                                   PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
+  carModel                                                        CarModel            @relation(fields: [carModelId], references: [id])
+  seller                                                          SavingsPlanSeller?  @relation(fields: [sellerId], references: [id])
 
   @@index([statusId])
   @@index([paymentMethodId])
@@ -144,17 +145,29 @@ model PaymentMethod {
 }
 
 model SavingsPlanStatus {
-  id           String        @id @default(cuid())
-  name         String        @unique(map: "savings_plan_status_name_unique")
-  description  String        @unique(map: "savings_plan_status_description_unique")
-  savingsPlans SavingsPlan[]
+  id                String        @id @default(cuid())
+  name              String        @unique(map: "savings_plan_status_name_unique")
+  description       String        @unique(map: "savings_plan_status_description_unique")
+  statusid          Int?
+  portfolioid       Int?
+  sellerid          Int?
+  title             String?       @db.VarChar(50)
+  plan_months       Int?
+  plan_total_months Int?
+  paymentmethodid   Int?
+  startdate         String?       @db.VarChar(50)
+  enddate           String?       @db.VarChar(50)
+  carmodelid        Int?
+  movingvalue       Float?        @db.Real
+  movingvalueusd    String?       @db.VarChar(50)
+  savingsPlans      SavingsPlan[]
 
   @@map("savings_plan_status")
 }
 
 model Car {
   id         String     @id @default(cuid())
-  plate      String     @unique(map: "car_plate_unique")
+  plate      String
   userId     String
   is_awarded Boolean
   is_drawn   Boolean
@@ -181,13 +194,14 @@ model CarModel {
 }
 
 model CarPhoto {
-  id         String    @id @default(cuid())
-  url        String    @db.Text
-  epigraph   String?   @db.Text
-  carId      String?
-  carModelId String?
-  car        Car?      @relation(fields: [carId], references: [id])
-  carModel   CarModel? @relation(fields: [carModelId], references: [id])
+  id                                  String    @id @default(cuid())
+  url                                 String
+  epigraph                            String?
+  carId                               String?
+  carModelId                          String?
+  Bronepigraphco_2_0_4wd_Wildtrak_At8 String?   @map("Bronepigraphco�2.0 4wd�Wildtrak�At8") @db.VarChar(50)
+  car                                 Car?      @relation(fields: [carId], references: [id])
+  carModel                            CarModel? @relation(fields: [carModelId], references: [id])
 
   @@index([carId])
   @@index([carModelId])
@@ -210,7 +224,7 @@ model Portfolio {
 
 model CarDealership {
   id          String      @id @default(cuid())
-  description String      @db.Text
+  description String
   addressId   String
   cuit        String      @db.VarChar(11)
   code        Int
@@ -223,8 +237,8 @@ model CarDealership {
 
 model Automotive {
   id          String      @id @default(cuid())
-  description String      @db.Text
-  logo        String      @db.Text
+  description String
+  logo        String
   createdAt   DateTime    @default(now())
   addressId   String
   address     Address     @relation(fields: [addressId], references: [id])
