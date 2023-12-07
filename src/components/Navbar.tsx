@@ -22,7 +22,7 @@ export const Navbar = ({ className }: NavbarProps) => {
   return (
     <nav className={clsx(className, "h-16 w-full bg-dark shadow-md")}>
       <ul className="flex h-full w-full items-center pl-9 pr-5 py-2">
-        <li className="shrink-0 text-light">
+        <li className="hidden md:list-item shrink-0 text-light">
           <Link href={routesPaths.landing}>
             <Image alt="Autosavings Logo" src={Autosavings} height={48} />
           </Link>

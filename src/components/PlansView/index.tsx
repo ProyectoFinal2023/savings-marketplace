@@ -21,12 +21,16 @@ export const PlansView = ({ search, total, plans }: PlansViewProps) => {
   } = usePlansList(search);
   return (
     <article className="mx-auto h-full w-10/12">
-      <header className="flex gap-4 py-5">
+      <header className="flex flex-wrap gap-4 py-5">
         <form onSubmit={onSubmit}>
-          <span className="p-input-icon-left">
-            <i className="pi pi-search" />
-            <InputText placeholder="Buscar" {...register("title")} />
-          </span>
+          <div className="flex flex-wrap">
+            <div className="p-inputgroup">
+              <span className="p-inputgroup-addon">
+                <i className="pi pi-search" />
+              </span>
+              <InputText placeholder="Buscar" {...register("title")} />
+            </div>
+          </div>
         </form>
         <Dropdown
           options={dropdownOptions}

@@ -71,7 +71,7 @@ const SellPlanPage: NextPage<
   };
   return (
     <Layout classname="">
-      <div className="px-8 py-4">
+      <div className="md:px-8 py-4">
         <form onSubmit={(e) => void handleSubmit(onSubmit)(e)}>
           <Card
             title="Publicar una Venta de Plan"

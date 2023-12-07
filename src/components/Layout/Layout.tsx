@@ -8,7 +8,7 @@ export const Layout = (props: PropsWithChildren<{ classname?: string }>) => {
     <main className="min-h-screen bg-white">
       <Navbar />
       <ConfirmDialog />
-      <section className={clsx(props.classname, "my-3 h-full px-16")}>
+      <section className={clsx(props.classname, "my-3 h-full px-0 md:px-16")}>
         {props.children}
       </section>
     </main>
