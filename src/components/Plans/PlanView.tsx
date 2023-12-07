@@ -184,7 +184,7 @@ const PlanView = ({ plan, user }: Props) => {
       }}
       // header={<h3 className="text-3xl text-center font-sans italic">AUTO</h3>}
     >
-      <div className="grid grid-cols-2 justify-center gap-4">
+      <div className="flex flex-col-reverse md:grid md:grid-cols-2 justify-center gap-4">
         <div className="p-d-flex p-jc-center p-mt-5">
           <Galleria
             value={carPhotos}
@@ -199,12 +199,14 @@ const PlanView = ({ plan, user }: Props) => {
         {/* TODO - Responsivness */}
         <div className="my-4 px-4">
           <div className="grid">
-            <span className="text-md py-2"><span className="cursor-pointer hover:underline" onClick={() => setPriceCurrency(currencies['ARS'])}>ARS</span> | <span className="cursor-pointer hover:underline" onClick={() => setPriceCurrency(currencies['USD'])}>USD</span></span>
             <span className="text-2xl font-bold">
               {plan.title.charAt(0).toUpperCase() + plan.title.slice(1)} -{" "}
               {plan.carModel.description}
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
+            <span className="text-md py-2 -mt-2">
+              <span className="cursor-pointer hover:underline" onClick={() => setPriceCurrency(currencies['ARS'])}>ARS</span> | <span className="cursor-pointer hover:underline" onClick={() => setPriceCurrency(currencies['USD'])}>USD</span>
+            </span>
             <div className="row text-black">
               <p className="text-3xl">{priceCurrency.formatter(plan[priceCurrency.planPrice])}</p>
               <p className="mt-2">
