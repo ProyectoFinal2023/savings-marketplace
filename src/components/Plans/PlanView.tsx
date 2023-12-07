@@ -18,7 +18,7 @@ import { type PlanDetail } from "~/types/plans";
 import { api } from "~/utils/api";
 import { type UserInfoT } from "~/types/userInfo";
 import ReservedPlanMessage, { type ContactInfoT } from "./ReservedPlanMessage";
-import { formatARS } from "~/utils/strings";
+import { formatARS, formatUSD } from "~/utils/strings";
 
 type Props = {
   plan: PlanDetail;
@@ -156,17 +156,6 @@ const PlanView = ({ plan, user }: Props) => {
     }
   }
 
-  const currencyFormat = (cash: number) =>
-    String(
-      new Intl.NumberFormat("en-AR", {
-        style: "currency",
-        currency: "USD",
-      }).format(cash)
-    )
-      .split("")
-      .slice(0, -3)
-      .join("");
-
   return (
     <Card
       pt={{
@@ -189,16 +178,16 @@ const PlanView = ({ plan, user }: Props) => {
         {/* TODO - Responsivness */}
         <div className="my-4 px-4">
           <div className="grid">
+            <span className="text-sm py-2">ARS | USD</span>
             <span className="text-2xl font-bold">
               {plan.title.charAt(0).toUpperCase() + plan.title.slice(1)} -{" "}
               {plan.carModel.description}
             </span>
             <Divider type="solid" style={{ borderWidth: "1px" }} />
             <div className="row text-black">
-              <p className="text-3xl">{formatARS(plan.movingValue)}</p>
+              <p className="text-3xl">{formatARS(plan.sellingPrice)} - {formatUSD(plan.sellingPriceUSD)}</p>
               <p className="mt-2">
-                {formatARS(plan.movingValue * monthsLeft)} en {monthsLeft}{" "}
-                cuotas
+                Valor total del plan {formatARS(plan.movingValue * plan.plan_total_months)} en {monthsLeft} cuotas de {formatARS(plan.movingValue)}
               </p>
             </div>
             <Button

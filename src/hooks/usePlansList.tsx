@@ -12,6 +12,7 @@ import { routePaths } from "~/utils/routes";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { api } from "~/utils/api";
+import { formatARS, formatUSD } from "~/utils/strings";
 
 export type DropdownOptionT = {
   text: string;
@@ -32,6 +33,12 @@ export const usePlansList = (search: SearchParams) => {
       className=" rounded-md"
     />
   );
+  const planPaymentTemplate = (plan: PlanList[0]) => {
+    return <span className="">{formatARS(plan.sellingPrice)}</span>;
+  };
+  const planPaymentTemplateUSD = (plan: PlanList[0]) => {
+    return <span className="">{formatUSD(plan.sellingPriceUSD)}</span>;
+  };
 
   const monthlyPaymentTemplate = (plan: PlanList[0]) => {
     const dollarString = Intl.NumberFormat("en-US", {
@@ -117,8 +124,14 @@ export const usePlansList = (search: SearchParams) => {
             sortable
           ></Column>
           <Column header="Image" body={imageTemplate}></Column>
+          <Column header="Precio de venta" body={planPaymentTemplate}></Column>
+          <Column header="Precio en dólares" body={planPaymentTemplateUSD}></Column>
           <Column header="Cuota Mensual" body={monthlyPaymentTemplate}></Column>
-          <Column header="En dólares" body={monthlyPaymentTemplateUSD}></Column>
+          <Column header="Cuota en dólares" body={monthlyPaymentTemplateUSD}></Column>
+          <Column
+            body={(plan: PlanList[0]) => plan.plan_total_months - plan.plan_months}
+            header="Meses pendientes"
+          ></Column>
           <Column
             field="plan_total_months"
             header="Meses Totales"

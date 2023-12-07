@@ -9,24 +9,24 @@ datasource db {
 }
 
 model User {
-  id                String              @id @default(cuid())
-  addressId         String?             @unique
-  userTypeId        String
-  birthdate         DateTime?
-  cuit              String?             @db.VarChar(11)
-  tutorialDone      Boolean             @default(false)
-  tutorialStep      Int                 @default(1)
-  clerkId           String?
-  email             String?
-  name              String?
-  phone             String?
-  surname           String?
-  address           Address?            @relation(fields: [addressId], references: [id])
-  userType          UserType            @relation(fields: [userTypeId], references: [id])
-  userInSavingsPlan UserInSavingsPlan[]
+  id                  String              @id @default(cuid())
+  addressId           String?             @unique
+  userTypeId          String
+  birthdate           DateTime?
+  cuit                String?             @db.VarChar(11)
+  tutorialDone        Boolean             @default(false)
+  tutorialStep        Int                 @default(1)
+  clerkId             String?
+  email               String?
+  name                String?
+  phone               String?
+  surname             String?
+  address             Address?            @relation(fields: [addressId], references: [id])
+  userType            UserType            @relation(fields: [userTypeId], references: [id])
+  userInSavingsPlan   UserInSavingsPlan[]
   sellerInSavingsPlan SavingsPlanSeller[]
-  cars              Car[]
-  guarantors        Guarantor[]
+  cars                Car[]
+  guarantors          Guarantor[]
 
   @@map("users")
 }
@@ -86,12 +86,14 @@ model SavingsPlan {
   carModelId        String
   movingValue       Int
   movingValueUSD    Int                 @default(300)
-  status            SavingsPlanStatus?   @relation(fields: [statusId], references: [id])
+  sellingPrice      Int                 @default(100000)
+  sellingPriceUSD   Int                 @default(800)
+  status            SavingsPlanStatus?  @relation(fields: [statusId], references: [id])
   usersInPlan       UserInSavingsPlan[]
   portfolio         Portfolio?          @relation(fields: [portfolioId], references: [id])
   paymentMethod     PaymentMethod       @relation(fields: [paymentMethodId], references: [id])
   carModel          CarModel            @relation(fields: [carModelId], references: [id])
-  seller            SavingsPlanSeller?   @relation(fields: [sellerId], references: [id])
+  seller            SavingsPlanSeller?  @relation(fields: [sellerId], references: [id])
 
   @@index([statusId])
   @@index([paymentMethodId])
@@ -143,7 +145,7 @@ model PaymentMethod {
 
 model SavingsPlanStatus {
   id           String        @id @default(cuid())
-  name  String               @unique(map: "savings_plan_status_name_unique")
+  name         String        @unique(map: "savings_plan_status_name_unique")
   description  String        @unique(map: "savings_plan_status_description_unique")
   savingsPlans SavingsPlan[]
 

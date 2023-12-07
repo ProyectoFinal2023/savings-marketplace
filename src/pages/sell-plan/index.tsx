@@ -51,12 +51,13 @@ const SellPlanPage: NextPage<
       photos: [],
       priceARS: "",
       priceUSD: "",
+      moving_value: "",
+      moving_value_USD: "",
       plan_months: "",
       plan_total_months: "",
       bank_info: "",
       phone_number: user?.phone ?? "",
       name: `${user?.name ?? ''} ${user?.surname ?? ''}` ?? "",
-      moving_value: "",
       description: "",
       paymentMethod: paymentMethods[0]?.id,
       startDate: new Date(),
@@ -65,6 +66,7 @@ const SellPlanPage: NextPage<
   });
 
   const onSubmit = (data: SchemaT) => {
+    console.log('data', data);
     postPlan(data);
   };
   return (
@@ -112,7 +114,7 @@ const SellPlanPage: NextPage<
                   register={register}
                   name="priceARS"
                   placeholder="Ej. 300000"
-                  label="Precio (ARS)"
+                  label="Precio de venta (ARS)"
                   keyfilter={"int"}
                   errors={errors}
                 />
@@ -120,7 +122,7 @@ const SellPlanPage: NextPage<
                   register={register}
                   name="priceUSD"
                   placeholder="Ej. 3000"
-                  label="Precio (USD)"
+                  label="Precio de venta (USD)"
                   keyfilter={"int"}
                   errors={errors}
                 />
@@ -131,11 +133,23 @@ const SellPlanPage: NextPage<
                     register={register}
                     name="moving_value"
                     placeholder="Ej. 56700"
-                    label="Cuota mensual actual"
+                    label="Cuota mensual actual ARS"
                     keyfilter={"int"}
                     errors={errors}
                   />
                 </div>
+                <div className="w-1/2 px-3 pr-2">
+                  <InputText
+                    register={register}
+                    name="moving_value_USD"
+                    placeholder="Ej. 500"
+                    label="Cuota mensual actual USD"
+                    keyfilter={"int"}
+                    errors={errors}
+                  />
+                </div>
+              </div>
+              <div className="-mx-3 flex flex-wrap items-start">
                 <div className="w-1/2 px-3">
                   <InputText
                     register={register}
@@ -146,9 +160,7 @@ const SellPlanPage: NextPage<
                     errors={errors}
                   />
                 </div>
-              </div>
-              <div className="-mx-3 flex flex-wrap items-start">
-                <div className="w-full px-3">
+                <div className="w-1/2 px-3">
                   <InputText
                     register={register}
                     name="plan_total_months"
